@@ -9,42 +9,47 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="#CCCCCC"
         app:popupTheme="@style/AppTheme.PopupOverlay" >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentTop="true">
 
             <Button
                 android:id="@+id/Community_back"
-                android:layout_width="wrap_content"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_gravity="left"
-                android:text="返回"
-                android:textSize="26dp"
-                android:layout_alignParentTop="true"
+                android:background="@drawable/back"
+                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:text="帮帮社区"
-                android:textColor="@android:color/white"
-                android:textSize="25sp" />
+                android:text="求助大厅"
+                android:textColor="#333333"
+                android:textSize="25sp"
+                android:id="@+id/textView2"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginRight="48dp"
+                android:layout_marginEnd="48dp" />
 
             <Button
                 android:id="@+id/Community_puthelp"
-                android:layout_width="wrap_content"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
                 android:text="寻求帮助"
-                android:textSize="16dp"
-                android:layout_alignParentTop="true"
+                android:textSize="20dp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/shape"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
         </RelativeLayout>
@@ -54,8 +59,7 @@
     <ListView
         android:id="@+id/listview_help_item"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+        android:layout_height="match_parent" />
 
 
 </LinearLayout>

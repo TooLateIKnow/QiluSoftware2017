@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:textColor="#FFF"
             android:textSize="24sp"
-            android:text="名字:" />
+            android:text="测试用户的名字" />
         <TextView
             android:id="@+id/tel"
             android:layout_width="wrap_content"
@@ -44,7 +44,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="0dp"
-            android:text="tel:17854212445" />
+            android:text="tel:17854212445"
+            android:textSize="20sp"/>
 
   </LinearLayout>
   </LinearLayout>
@@ -52,7 +53,8 @@
         android:id="@+id/mail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="2581325929@qq.com"
+        android:text="Email:2581325929@qq.com"
+        android:textSize="20sp"
         android:paddingTop="20dp"
         android:layout_marginLeft="20dp"/>
 

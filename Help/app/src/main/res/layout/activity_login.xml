@@ -5,21 +5,21 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="@drawable/ic_backpicture"
+    android:background="@drawable/bg_lightblue"
     tools:context="qilu.help.Login">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="#666666"
         app:popupTheme="@style/AppTheme.PopupOverlay" >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:text="帮帮-登录"
+            android:text="帮我 登录页"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
     </android.support.v7.widget.Toolbar>
@@ -110,27 +110,28 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/login_in"
                     style="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
                     android:layout_marginTop="16dp"
+                    android:layout_weight="0.5"
                     android:text="登录"
                     android:textSize="16sp"
                     android:textStyle="bold" />
+
                 <Button
                     android:id="@+id/sign_in"
                     style="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
                     android:layout_marginTop="16dp"
+                    android:layout_weight="0.5"
                     android:text="注册"
                     android:textSize="16sp"
                     android:textStyle="bold" />

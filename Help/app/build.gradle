@@ -7,10 +7,15 @@ android {
         applicationId "qilu.help"
         minSdkVersion 14
         targetSdkVersion 25
+<<<<<<< HEAD
 
+=======
+        multiDexEnabled true
+>>>>>>> 4601706515d8761d6b15a3ca1ffe028863942885
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
