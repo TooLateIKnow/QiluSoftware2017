@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_setHeader"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="更改头像" >
+            <menu>
+                <item
+                android:id="@+id/nav_selectByPhoto"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="拍照"/>
+                <item
+                    android:id="@+id/nav_selectByAlbum"
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="相册"/>
+            </menu>
+        </item>
+        <item
+            android:id="@+id/nav_setTel"
+            android:icon="@drawable/ic_menu_phone"
+            android:title="更改手机号码" />
+        <item
+            android:id="@+id/nav_setMail"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="更改邮箱" />
+        <item
+            android:id="@+id/nav_setPersonal"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="修改用户名" />
+    </group>
+
+    <item android:title="帮帮社区">
+        <menu>
+            <item
+                android:id="@+id/nav_space"
+                android:icon="@drawable/ic_menu_share"
+                android:title="帮助空间" />
+            <item
+                android:id="@+id/nav_record"
+                android:icon="@drawable/ic_menu_send"
+                android:title="历史记录" />
+        </menu>
+    </item>
+
+</menu>
