@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/Recorc_item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="日期："/>
+
+    <TextView
+        android:id="@+id/Record_item_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="地点："/>
+
+    <TextView
+        android:id="@+id/Record_item_incident"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="事件："/>
+    <!--格式为xxx帮助了xxx-->
+
+
+</LinearLayout>

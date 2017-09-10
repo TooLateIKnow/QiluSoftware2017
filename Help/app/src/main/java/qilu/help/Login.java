@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -29,32 +30,95 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
+/*public class Login extends AppCompatActivity implements View.OnClickListener{
+
+    private EditText Login_username;
+    private EditText Login_password;
+    private Button Login_login;
+    private Button Login_sign;
+
+    private String username;
+    private String password;
+    private boolean ifOk = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        init();
+    }
+
+    public void init(){
+        Login_username = (EditText)findViewById(R.id.Login_username);
+        Login_password = (EditText)findViewById(R.id.Login_password);
+        Login_login = (Button)findViewById(R.id.Login_login);
+        Login_sign = (Button)findViewById(R.id.Login_sign);
+
+        Login_login.setOnClickListener(this);
+        Login_sign.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v){
+        switch(v.getId()){
+            case R.id.Login_login:
+                username = Login_username.getText().toString().trim();
+                password = Login_password.getText().toString().trim();
+                //调用方法
+                JudgeIegal(username,password);
+                if(ifOk) {
+                    //上传数据
+                    connectToServer();//传入服务器
+                }
+                break;
+            case R.id.Login_sign:
+                break;
+        }
+    }
+
+    //判断输入是否合法
+    public void JudgeIegal(String username,String password){
+        ifOk = true;
+    }
+
+    //传入服务器
+    public void connectToServer(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    String urlStr="http://172.24.237.151:50000/HelpServer/loginingservlet";//设置路径
+                    //下面是写入服务器中的数据
+                    String params="username=" + username
+                            + "&password=" + password;
+                    String resultData=HttpUtil.HttpPostMethod(urlStr,params);
+                    if(resultData.equals("登录成功")) {
+                        System.out.println(resultData);
+                    }
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+}*/
+
+
 public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -84,11 +148,21 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        //点击登录Login_in按钮
+        Button mEmailSignInButton = (Button) findViewById(R.id.login_in);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+        //点击注册Sign_in按钮
+        Button btnSignIn = (Button)findViewById(R.id.sign_in);
+        btnSignIn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {//跳转到注册界面
+                Intent intent = new Intent(Login.this,SignInActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -126,9 +200,6 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         return false;
     }
 
-    /**
-     * Callback received when a permissions request has been completed.
-     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -139,12 +210,6 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         }
     }
 
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -154,21 +219,20 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String email = mEmailView.getText().toString();//获得邮箱
+        String password = mPasswordView.getText().toString();//获得密码
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
+        // 检查密码
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
+        // 检查邮箱地址
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
@@ -179,22 +243,47 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             cancel = true;
         }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
+        if (cancel) {//如果检查不合格
             focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+        } else {//如果检查合格
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
-        }
-        Intent intent = new Intent(Login.this,MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
+            //上传数据到服务器
+            connectToServer(email,password);
+        }
+    }
+    //上传数据到服务器
+    public void connectToServer(final String username,final String password){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    //为了测试直接登录
+                    Intent intentLogin = new Intent("HAS.LOGINED.IN.SUCCEED");
+                    sendBroadcast(intentLogin);
+
+
+                    String urlStr="http://172.24.237.151:50000/HelpServer/loginingservlet";//设置路径
+                    //下面是写入服务器中的数据
+                    String params="username=" + username
+                            + "&password=" + password;
+                    System.out.println("conent--->"+"username="+username+"&password="+password);
+                    String resultData=HttpUtil.HttpPostMethod(urlStr,params);
+                    if (resultData.equals("登录成功")) {
+                        /*
+                        //接收登录的广播
+                        Intent intentLogin = new Intent("HAS.LOGINED.IN.SUCCEED");
+                        sendBroadcast(intentLogin);*/
+                    }
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
@@ -205,14 +294,9 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         return password.length() > 4;
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
+    private void showProgress(final boolean show) {//进度条
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -295,10 +379,6 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         int IS_PRIMARY = 1;
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;

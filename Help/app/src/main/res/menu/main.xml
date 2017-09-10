@@ -8,7 +8,12 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_exit"
-        android:orderInCategory="200"
-        android:title="账号退出"
+        android:orderInCategory="100"
+        android:title="退出登录"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_exitApp"
+        android:orderInCategory="100"
+        android:title="退出程序"
         app:showAsAction="never"/>
 </menu>

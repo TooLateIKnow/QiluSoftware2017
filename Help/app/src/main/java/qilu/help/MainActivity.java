@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,6 +27,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.test.suitebuilder.TestMethod;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -57,9 +59,16 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +76,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener {
+    public static  boolean ifLogin = false;
+    public static  boolean ifSign = false;
 
     private boolean fabOpened = false;
     private MapView mapView;
@@ -119,6 +130,9 @@ public class MainActivity extends AppCompatActivity
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.INTERNET);
+        }
         if (!permissionList.isEmpty()){
             String[]permissions = permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
@@ -155,13 +169,22 @@ public class MainActivity extends AppCompatActivity
         mail = (TextView) headView.findViewById(R.id.mail);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //获取五个控件
+        //获取三个控件
         OpenPhone = (FloatingActionButton)findViewById(R.id.OpenPhone);
         OpenPhone.setOnClickListener(this);
         OpenShare = (Button)findViewById(R.id.OpenShare);
         OpenShare.setOnClickListener(this);
         OpenShortMessage = (Button)findViewById(R.id.OpenShortMessage);
         OpenShortMessage.setOnClickListener(this);
+
+        //读取文件
+        if(ifLogin){
+            Toast.makeText(this,"1",Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this,"0",Toast.LENGTH_SHORT).show();
+        }
+        save();
+        load();
 
     }
 
@@ -248,6 +271,16 @@ public class MainActivity extends AppCompatActivity
         mLocationClient.stop();
         mapView.onDestroy();
         baiduMap.setMyLocationEnabled(false);
+        if(ifLogin){
+            Toast.makeText(this,"destior:1",Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this,"destior:0",Toast.LENGTH_SHORT).show();
+        }
+        save();
+    }
+    @Override
+    protected void onRestart(){
+        super.onRestart();
     }
 
     @Override//点击背景
@@ -260,27 +293,39 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+    @Override//创建工具条菜单
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.action_login).setChecked(true);
+        if(ifLogin){
+            item.setTitle("已登录");
+            item.setEnabled(false);
+        }else{
+            item.setTitle("账号登录");
+            item.setEnabled(true);
+        }
+        return true;
+    }
 
     @Override//工具条上的菜单事件
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_login) {
+        if (id == R.id.action_login) {//跳转到登录界面
             Intent intent = new  Intent(this,Login.class);
             startActivity(intent);
             return true;
         }
         if(id==R.id.action_exit){
+            ifLogin = false;
+        }
+        if(id==R.id.action_exitApp){
             finish();
         }
 
@@ -293,48 +338,54 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_selectByPhoto) {
-            File outputImage = new File(getExternalCacheDir(),"output_image.jpg");
-            try{
-                if(outputImage.exists()){
-                    outputImage.delete();
+        if(ifLogin){//如果登录了，这些工具都可以操作
+            if (id == R.id.nav_selectByPhoto) {
+                File outputImage = new File(getExternalCacheDir(),"output_image.jpg");
+                try{
+                    if(outputImage.exists()){
+                        outputImage.delete();
+                    }
+                    outputImage.createNewFile();
+                }catch(IOException e){
+                    e.printStackTrace();
                 }
-                outputImage.createNewFile();
-            }catch(IOException e){
-                e.printStackTrace();
+                if(Build.VERSION.SDK_INT>=24){
+                    imageUri = FileProvider.getUriForFile(MainActivity.this,
+                            "qilu.help.fileprovider",outputImage);
+                }else{
+                    imageUri = Uri.fromFile(outputImage);
+                }
+
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+                startActivityForResult(intent,TAKE_PHOTO);
+
+            } else if (id == R.id.nav_selectByAlbum) {
+                if(ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+                }else{
+                    openAlbum();
+                }
+
+            } else if (id == R.id.nav_setTel) {//若干个对话框
+                inputTitleDialog("输入手机号：","确定",R.id.nav_setTel);
+                tel.setSelected(false);
+            } else if (id == R.id.nav_setMail) {
+                inputTitleDialog("输入邮箱：","确定",R.id.nav_setMail);
+                mail.setSelected(false);
+            } else if (id == R.id.nav_setPersonal) {
+                inputTitleDialog("输入昵称：","确定",R.id.nav_setPersonal);
+                name.setSelected(false);
+            } else if (id == R.id.nav_space) {
+                Intent intent = new Intent(MainActivity.this,HelpCommunity.class);
+                startActivity(intent);
+            } else if (id == R.id.nav_record) {
+                Intent intent = new Intent(MainActivity.this,RecordActivity.class);
+                startActivity(intent);
             }
-            if(Build.VERSION.SDK_INT>=24){
-                imageUri = FileProvider.getUriForFile(MainActivity.this,
-                        "qilu.help.fileprovider",outputImage);
-            }else{
-                imageUri = Uri.fromFile(outputImage);
-            }
-
-            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-            intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
-            startActivityForResult(intent,TAKE_PHOTO);
-
-        } else if (id == R.id.nav_selectByAlbum) {
-            if(ContextCompat.checkSelfPermission(MainActivity.this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
-            }else{
-                openAlbum();
-            }
-
-        } else if (id == R.id.nav_setTel) {
-            inputTitleDialog("输入手机号：","确定",R.id.nav_setTel);
-            tel.setSelected(false);
-        } else if (id == R.id.nav_setMail) {
-            inputTitleDialog("输入邮箱：","确定",R.id.nav_setMail);
-            mail.setSelected(false);
-        } else if (id == R.id.nav_setPersonal) {
-            inputTitleDialog("输入昵称：","确定",R.id.nav_setPersonal);
-            name.setSelected(false);
-        } else if (id == R.id.nav_space) {
-
-        } else if (id == R.id.nav_record) {
-
+        }else{
+            Toast.makeText(this,"请先登录",Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -344,30 +395,30 @@ public class MainActivity extends AppCompatActivity
     //打开照相机或者相册
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data){
-        switch(requestCode){
-            case TAKE_PHOTO:
-                if(resultCode==RESULT_OK){
-                   try{
-                       Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().
-                                                                openInputStream(imageUri));
-                       picture.setImageBitmap(bitmap);
-                   }catch(FileNotFoundException e){
-                       e.printStackTrace();
-                   }
-                }
-                break;
-            case CHOOSE_PHOTO:
-                if(resultCode==RESULT_OK){
-                    if(Build.VERSION.SDK_INT>=19){
-                        handleImageOnKitKat(data);
-                    }else{
-                        handleImageBeforeKitKat(data);
+            switch(requestCode){
+                case TAKE_PHOTO:
+                    if(resultCode==RESULT_OK){
+                        try{
+                            Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().
+                                    openInputStream(imageUri));
+                            picture.setImageBitmap(bitmap);
+                        }catch(FileNotFoundException e){
+                            e.printStackTrace();
+                        }
                     }
-                }
-                break;
-            default:
-                break;
-        }
+                    break;
+                case CHOOSE_PHOTO:
+                    if(resultCode==RESULT_OK){
+                        if(Build.VERSION.SDK_INT>=19){
+                            handleImageOnKitKat(data);
+                        }else{
+                            handleImageBeforeKitKat(data);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
     }
     //打开相册
     private void openAlbum(){
@@ -423,8 +474,6 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this,"failed to get image",Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
     //打开悬浮按钮
     public void openMenu(View view){
@@ -561,6 +610,56 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 break;
+        }
+    }
+
+    public void save(){//打开文件，将是否登录的信息存进去
+        FileOutputStream out = null;
+        BufferedWriter writer= null;
+        try{
+            out = openFileOutput("Login", Context.MODE_PRIVATE);
+            writer = new BufferedWriter(new OutputStreamWriter(out));
+            if(ifLogin){
+                writer.write("1");
+            }else{
+                writer.write("0");
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }finally {
+            try{
+                if(writer!=null){
+                    writer.close();
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+    protected void load(){ //打开文件，读取登录信息,确认账号是登录还是离线
+        FileInputStream in = null;
+        BufferedReader reader = null;
+        String number = "";
+        try{
+            in = openFileInput("Login");
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while((line=reader.readLine())!=null){
+                number = line;
+            }
+            if(number.equals("1")){
+                ifLogin = true;
+            }else if(number.equals("0")){
+                ifLogin = false;
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        } finally {
+            try{
+                reader.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
     }
 }

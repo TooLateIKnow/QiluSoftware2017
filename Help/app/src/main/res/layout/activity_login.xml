@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:background="@drawable/ic_backpicture"
     tools:context="qilu.help.Login">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -17,12 +19,44 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:text="登录"
+            android:text="帮帮-登录"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
     </android.support.v7.widget.Toolbar>
 
-    <!-- Login progress -->
+    <!--<EditText
+        android:id="@+id/Login_username"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="用户名"
+        android:background="#FFFFFF"/>
+    <EditText
+        android:id="@+id/Login_password"
+        android:layout_width="match_parent"
+        android:hint="密码"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <Button
+            android:id="@+id/Login_login"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:text="登录"/>
+        <Button
+            android:id="@+id/Login_sign"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="60dp"
+            android:text = "注册"/>
+
+    </LinearLayout>-->
+
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
@@ -75,14 +109,32 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/email_sign_in_button"
-                style="?android:textAppearanceSmall"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in"
-                android:textStyle="bold" />
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/login_in"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:layout_marginTop="16dp"
+                    android:text="登录"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <Button
+                    android:id="@+id/sign_in"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:layout_marginTop="16dp"
+                    android:text="注册"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

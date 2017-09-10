@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -24,15 +25,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities = "qilu.help.fileprovider"
+            android:authorities="qilu.help.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
 
         <meta-data
@@ -41,10 +41,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name=".Login"
-            android:label="@string/title_activity_login"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,11 +49,49 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Login"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar" />
 
+        <!-- 一个服务，当程序进入后台也可以用 -->
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote" />
+
+        <!-- 一个广播。通知程序登录还是退出 -->
+        <receiver
+            android:name=".LoginReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="HAS.LOGINED.IN.SUCCEED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".SignInActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".HelpCommunity"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ChatRoom"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="qilu.help.ACTION_CHAT_START" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".RecordActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
