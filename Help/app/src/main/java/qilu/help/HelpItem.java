@@ -7,6 +7,7 @@ package qilu.help;
 public class HelpItem {
     private String help_item_username;
     private String help_item_content;
+    private boolean ifMine = false;
 
     public void setHelp_item_username(String help_item_username){
         this.help_item_username = help_item_username;
@@ -19,4 +20,11 @@ public class HelpItem {
     }public String getHelp_item_content(){
         return help_item_content;
     }
+
+    public void setIfMine(boolean ifMine){
+        this.ifMine = ifMine;
+    }public boolean getIfMine(){
+        return ifMine;
+    }
 }
+

@@ -29,8 +29,10 @@ public class HelpCommunityAdapter extends ArrayAdapter<HelpItem> {
     public View getView(int position,View converView,ViewGroup parent){
         HelpItem helpItem = getItem(position);
         View view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
+
         TextView help_item_username = (TextView)view.findViewById(R.id.help_item_username);
         TextView help_item_content = (TextView)view.findViewById(R.id.help_item_content);
+
         help_item_username.setText(helpItem.getHelp_item_username());
         help_item_content.setText(helpItem.getHelp_item_content());
         return view;

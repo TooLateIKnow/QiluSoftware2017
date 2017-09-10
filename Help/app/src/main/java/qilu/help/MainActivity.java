@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity
     public static final int CHOOSE_PHOTO = 2;
     private CircleImageView picture;
     private Uri imageUri;
-    private TextView name;
+    private TextView name;    static public String sendingname = null;//用来传递用户名
     private TextView tel;
     private TextView mail;
 
@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity
     private Button OpenShortMessage;
 
 
-    private StringBuilder currentPosition;
-    private String sosText;
+    private StringBuilder currentPosition;  static public String sendingCurrentposition = null;
+    private String sosText; //用来生成求助文本
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity
         View headView = navigationView.inflateHeaderView(R.layout.nav_header_main);
         picture = (CircleImageView) headView.findViewById(R.id.head_CircleImageView);
         name = (TextView) headView.findViewById(R.id.name);
+        sendingname = name.getText().toString();//用来将用户的用户名传递
         tel = (TextView) headView.findViewById(R.id.tel);
         mail = (TextView) headView.findViewById(R.id.mail);
         navigationView.setNavigationItemSelectedListener(this);
@@ -252,6 +253,7 @@ public class MainActivity extends AppCompatActivity
         currentPosition.append("当前位置是：  纬度：").append(location.getLatitude()).append("   ");
         currentPosition.append("经度：").append(location.getLongitude()).append("\n");
         currentPosition.append(location.getAddrStr()).append("\n");
+        sendingCurrentposition = currentPosition.toString();//将当前位置信息发送出去
         sosText = currentPosition.toString()+"事件是：  ";
     }
 
@@ -532,7 +534,8 @@ public class MainActivity extends AppCompatActivity
                                 break;
                             case R.id.nav_setPersonal:
                                 if(inputServer.getText().toString()!=null){
-                                    tel.setText(inputServer.getText().toString());
+                                    name.setText(inputServer.getText().toString());
+                                    sendingname = name.getText().toString();
                                 }else{
                                     Toast.makeText(MainActivity.this,"用户名无效",Toast.LENGTH_SHORT).show();
                                 }

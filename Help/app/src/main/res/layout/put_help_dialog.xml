@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableRow>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="称谓："
+            android:textSize="13pt"/>
+        <EditText
+            android:id="@+id/put_help_Dialog_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13pt"
+            android:inputType="textMultiLine"
+            android:text="" />
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="地点："
+            android:textSize="13pt"/>
+        <EditText
+            android:id="@+id/put_help_Dialog_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:textSize="13pt" />
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="时间："
+            android:textSize="13pt"/>
+        <EditText
+            android:id="@+id/put_help_Dialog_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:textSize="13pt" />
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="事件："
+            android:textSize="13pt"/>
+        <EditText
+            android:id="@+id/put_help_Dialog_incident"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:textSize="13pt"
+            android:hint="请描述您遇到的事件" />
+    </TableRow>
+
+
+
+</TableLayout>
