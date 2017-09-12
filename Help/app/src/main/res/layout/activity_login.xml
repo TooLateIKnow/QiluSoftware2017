@@ -24,25 +24,28 @@
             android:textSize="25sp" />
     </android.support.v7.widget.Toolbar>
 
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="30dp"
+    <!--<ImageView-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="70dp"-->
+        <!--android:layout_marginTop="30dp"-->
 
-        android:background="@drawable/title1"/>
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/etitle1"/>
+        <!--android:background="@drawable/title1"/>-->
 
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="0dp"
         android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/helpmechina" />
 
     <ScrollView
         android:id="@+id/login_form"

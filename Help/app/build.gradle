@@ -8,7 +8,9 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
 
+
         //multiDexEnabled true
+
 
         versionCode 1
         versionName "1.0"

@@ -71,9 +71,10 @@
             android:id="@+id/ChatRoom_send"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:background="#33CC66"
+            android:background="#2DA8F6"
             android:textSize="23dp"
-            android:text="发 送"/>
+            android:text="发 送"
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
 
 </LinearLayout>
