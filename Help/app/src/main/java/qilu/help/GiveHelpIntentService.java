@@ -9,6 +9,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class GiveHelpIntentService extends IntentService {
     //TODO:该服务在点击“给予帮助”的时候启动
     //TODO:该服务的作用是：启用一个线程实时的连接服务器，将“我的用户名（如果可以的话加上头像）
@@ -32,8 +35,12 @@ public class GiveHelpIntentService extends IntentService {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            //读取当前系统时间
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
+            Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+            String currentDate = formatter.format(curDate);
             //在“消息大厅”中添加记录
-            MessageActivity.addRecord("周欢","我在石油大学北门蛋糕房，希望能得到您的帮助");
+            MessageActivity.addRecord("周欢","我在石油大学北门蛋糕房，希望能得到您的帮助",currentDate,true);
             //给手机发送一个通知
             Intent Notificationintent = new Intent(GiveHelpIntentService.this,MessageActivity.class);
             PendingIntent pi = PendingIntent.getActivity(GiveHelpIntentService.this,0,Notificationintent,0);
