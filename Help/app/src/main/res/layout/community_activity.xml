@@ -30,7 +30,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/community2"
+                android:background="@drawable/req_room"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/textView2"
                 android:layout_toStartOf="@+id/textView2" />

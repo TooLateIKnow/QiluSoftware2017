@@ -8,11 +8,10 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
 
-<<<<<<< HEAD
-=======
+
         //multiDexEnabled true
 
->>>>>>> 73f5f38cd21b126752b63470d762b5b0b82ef77c
+
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

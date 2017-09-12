@@ -17,15 +17,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:text="我的用户名"/>
+            android:text="用户名"/>
 
         <!--也可以使用图片，不过首先要解决传递图片的问题-->
 
         <LinearLayout
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/message_left">
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:background="@drawable/dialog_left">
             <TextView
                 android:id="@+id/ChatRoom_left_message_I_send"
                 android:layout_width="wrap_content"
@@ -35,25 +35,27 @@
 
     <LinearLayout
         android:id="@+id/Right_message"
-        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:orientation="vertical"
         android:padding="5dp">
+
         <TextView
             android:id="@+id/ChatRoom_heName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:text="对方的用户名"/>
+            android:text="用户名"
+            android:textSize="20dp" />
 
         <!--也可以使用图片，不过首先要解决传递图片的问题-->
 
         <LinearLayout
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/message_right">
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:background="@drawable/dialog_right">
+
             <TextView
                 android:id="@+id/ChatRoom_right_message_He_send"
                 android:layout_width="wrap_content"
