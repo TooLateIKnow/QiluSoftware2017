@@ -21,41 +21,20 @@
             android:layout_gravity="center"
             android:text="帮我 登录页"
             android:textColor="@android:color/white"
-            android:textSize="20sp" />
+            android:textSize="25sp" />
     </android.support.v7.widget.Toolbar>
 
-    <!--<EditText
-        android:id="@+id/Login_username"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:hint="用户名"
-        android:background="#FFFFFF"/>
-    <EditText
-        android:id="@+id/Login_password"
-        android:layout_width="match_parent"
-        android:hint="密码"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:background="#FFFFFF"/>
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="30dp"
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp">
-        <Button
-            android:id="@+id/Login_login"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:text="登录"/>
-        <Button
-            android:id="@+id/Login_sign"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="60dp"
-            android:text = "注册"/>
-
-    </LinearLayout>-->
+        android:background="@drawable/title1"/>
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/etitle1"/>
 
     <ProgressBar
         android:id="@+id/login_progress"
@@ -84,7 +63,8 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
+                    android:hint="手机号:"
+                    android:textColorHint="#C0C0C0"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true" />
@@ -99,7 +79,7 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
+                    android:hint="密码："
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
@@ -112,28 +92,29 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <Button
                     android:id="@+id/login_in"
                     style="?android:textAppearanceSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_weight="0.5"
-                    android:text="登录"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:layout_width="350dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:text="登   录"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    />
 
                 <Button
                     android:id="@+id/sign_in"
                     style="?android:textAppearanceSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_weight="0.5"
-                    android:text="注册"
-                    android:textSize="16sp"
+                    android:layout_width="350dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="注   册"
+                    android:textSize="25sp"
                     android:textStyle="bold" />
             </LinearLayout>
 

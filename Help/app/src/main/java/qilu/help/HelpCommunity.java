@@ -1,15 +1,19 @@
 package qilu.help;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,10 +21,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +45,15 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
 
     //定义适配器
     HelpCommunityAdapter adapter;
+
+    //获得PopupWindow中的控件
+    private Button PopupWindow_update;
+    private Button PopupWindow_delete;
+
+    //界面下面的三个按钮
+    private FloatingActionButton Community_To_Message;
+    private FloatingActionButton Community_To_Community;
+    private FloatingActionButton Community_To_Record;
 
     String helpDate = null;//用于存储当前时间
 
@@ -64,16 +80,24 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
             public void onItemClick(AdapterView<?>parent,View view,int position,long id){
                 HelpItem helpItem = helpItemList.get(position); //获得了那个子项
                 if(helpItem.getIfMine()){
-                    showInfoMe(view,position,helpItem);
+                    initPopup(view,position,helpItem);
                 }else{
                     showInfo(helpItem.getHelp_item_username(),helpItem.getHelp_item_content());
                 }
 
             }
-    });
+        });
     }
 
     public void init(){
+        Community_To_Message  = (FloatingActionButton)findViewById(R.id.Community_To_Message);
+        Community_To_Community = (FloatingActionButton)findViewById(R.id.Community_To_Community);
+        Community_To_Record = (FloatingActionButton)findViewById(R.id.Community_To_Record);
+
+        Community_To_Message.setOnClickListener(this);
+        Community_To_Community.setOnClickListener(this);
+        Community_To_Record.setOnClickListener(this);
+
         Community_back = (Button)findViewById(R.id.Community_back);
         Community_puthelp = (Button)findViewById(R.id.Community_puthelp);
         Community_back.setOnClickListener(this);
@@ -109,6 +133,16 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(final View v) {
         switch (v.getId()) {
+            case R.id.Community_To_Message:
+                Intent Community_To_MessageIntent = new Intent(this,MessageActivity.class);
+                startActivity(Community_To_MessageIntent);
+                break;
+            case R.id.Community_To_Community:
+                break;
+            case R.id.Community_To_Record:
+                Intent Community_To_RecordIntent = new Intent(this,RecordActivity.class);
+                startActivity(Community_To_RecordIntent);
+                break;
             case R.id.Community_back:
                 finish();
                 break;
@@ -144,8 +178,14 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                                         , put_help_Dialog_date.getText().toString()
                                         , put_help_Dialog_incident.getText().toString()
                                         , true);
+                                //弹出一个进度条对话框
+                                //ProgressDialog.show(HelpCommunity.this,"任务执行中","正在添加，请稍后...",false,true);
                                 //这里需要刷新页面
                                 addListToAdapter();
+                                //发布求助信息后会打开一个服务
+                                Intent intentserver = new Intent(HelpCommunity.this,
+                                        PutHelpIntentService.class);
+                                startService(intentserver);
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -167,72 +207,109 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                 .setPositiveButton("给予帮助", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent("qilu.help.ACTION_CHAT_START");
-                        intent.putExtra("extra_data",helpusername);
-                        startActivity(intent);
+                        //点击“给予帮助”,将会向服务器发送请求，但是不会跳转到聊天界面。
+                        //聊天界面通过点击消息中的list跳转。
+                        Toast.makeText(HelpCommunity.this,"已向对方发送消息！正在等待对方回应",Toast.LENGTH_SHORT).show();
+                        //此处应该打开一个服务，用来监听对方的回应
+                        Intent intentserver = new Intent(HelpCommunity.this,
+                                                  GiveHelpIntentService.class);
+                        startService(intentserver);
+                        //点击“给予帮助”后，会向服务器发送一条通知，该通知用来通知另一方
+                        //这里先不添加服务器，直接使用socket使两方通信
+
+
                     }
                 }).show();
     }
     //ListView 中各子项的事件2：是用户自己发送的
-    public void showInfoMe(View view,final int position,final HelpItem helpItem){
-        PopupMenu popup = new PopupMenu(HelpCommunity.this,view);
-        getMenuInflater().inflate(R.menu.popup_item,popup.getMenu());
-        popup.setOnMenuItemClickListener(
-                new PopupMenu.OnMenuItemClickListener(){
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item){
-                        switch (item.getItemId()){
-                            case R.id.Popup_delete:
+    public void initPopup(View v,final int position,final HelpItem helpItem){
+        View view= LayoutInflater.from(HelpCommunity.this).inflate(R.layout.popupwindow_layout, null, false);
+        PopupWindow_update = (Button)view.findViewById(R.id.PopupWindow_update);
+        PopupWindow_delete = (Button)view.findViewById(R.id.PopupWindow_delete);
+        //1.构造一个PopupWindow，参数依次是加载的View，宽高
+        final PopupWindow popWindow = new PopupWindow(view,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popWindow.setAnimationStyle(R.anim.anim_pop);  //设置加载动画
+        //这些为了点击非PopupWindow区域，PopupWindow会消失的，如果没有下面的
+        //代码的话，你会发现，当你把PopupWindow显示出来了，无论你按多少次后退键
+        //PopupWindow并不会关闭，而且退不出程序，加上下述代码可以解决这个问题
+        popWindow.setTouchable(true);
+        popWindow.setTouchInterceptor(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+                // 这里如果返回true的话，touch事件将被拦截
+                // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+            }
+        });
+        popWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));    //要为popWindow设置一个背景才有效
+        //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
+        popWindow.showAsDropDown(v, 300, 0);
+        //设置popupWindow里的按钮的事件
+        PopupWindow_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //弹出对话框警告用户
+                new android.support.v7.app.AlertDialog.Builder(HelpCommunity.this).setTitle("确定删除该条求助！")
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setPositiveButton("确认删除",new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
                                 //删除选中的子项
                                 helpItemList.remove(position);
                                 adapter.notifyDataSetChanged();//适配器自适应
-                                break;
-                            case R.id.Popup_update:
-                                //修改选中的子项,
-                                //弹出对话框
-                                final TableLayout putHelpDialog = (TableLayout) getLayoutInflater().inflate(R.layout.put_help_dialog, null);
-                                //对话框的控件添加信息
-                                put_help_Dialog_username = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_username);
-                                put_help_Dialog_location = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_location);
-                                put_help_Dialog_date = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_date);
-                                put_help_Dialog_incident = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_incident);
+                            }}).show();
+                popWindow.dismiss();
+            }
+        });
+        PopupWindow_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //修改选中的子项,
+                //弹出对话框
+                final TableLayout putHelpDialog = (TableLayout) getLayoutInflater().inflate(R.layout.put_help_dialog, null);
+                //对话框的控件添加信息
+                put_help_Dialog_username = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_username);
+                put_help_Dialog_location = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_location);
+                put_help_Dialog_date = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_date);
+                put_help_Dialog_incident = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_incident);
 
-                                //设置对话框
-                                AlertDialog.Builder dialog = new AlertDialog.Builder(HelpCommunity.this);
-                                //.setIcon()
-                                dialog.setTitle("修改求助信息")
-                                        .setView(putHelpDialog)
-                                        .setCancelable(true)
-                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                //设置对话框
+                AlertDialog.Builder dialog = new AlertDialog.Builder(HelpCommunity.this);
+                //.setIcon()
+                dialog.setTitle("修改求助信息")
+                        .setView(putHelpDialog)
+                        .setCancelable(true)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //弹出一个对话框要求用户确认
+                                new android.support.v7.app.AlertDialog.Builder(HelpCommunity.this).setTitle("确定修改该条求助！")
+                                        .setIcon(android.R.drawable.ic_dialog_info)
+                                        .setPositiveButton("确认修改",new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 //将修改的内容同步到列表中
                                                 helpItem.setHelp_item_username(put_help_Dialog_username.getText().toString());
                                                 StringBuilder helpcontent = new StringBuilder();
                                                 helpcontent.append(put_help_Dialog_location.getText().toString())
-                                                           .append(put_help_Dialog_date.getText().toString())
-                                                           .append(put_help_Dialog_incident.getText().toString());
+                                                        .append(put_help_Dialog_date.getText().toString())
+                                                        .append(put_help_Dialog_incident.getText().toString());
                                                 helpItem.setHelp_item_content(helpcontent.toString());
                                                 //这里需要刷新页面
                                                 //addListToAdapter();
-                                            }
-                                        })
-                                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        });
-                                dialog.show();
+                                            }}).show();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                dialog.show();
+            }
+        });
 
-                                break;
-                            default:
-                                break;
-                        }
-                        return true;
-                    }
-                }
-        );
-        popup.show();
     }
 }

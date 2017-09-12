@@ -19,7 +19,7 @@
             android:layout_alignParentTop="true">
 
             <Button
-                android:id="@+id/Community_back"
+                android:id="@+id/Message_back"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="left"
@@ -27,10 +27,11 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
+
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/community2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/messageroom"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/textView2"
                 android:layout_toStartOf="@+id/textView2" />
@@ -39,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="求助大厅"
+                android:text="消息大厅"
                 android:textColor="#333333"
                 android:textSize="25sp"
                 android:id="@+id/textView2"
@@ -48,29 +49,18 @@
                 android:layout_marginRight="48dp"
                 android:layout_marginEnd="48dp" />
 
-            <Button
-                android:id="@+id/Community_puthelp"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:text="寻求帮助"
-                android:textSize="20dp"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/shape"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
-        <!--&lt;!&ndash; 中间的按钮&ndash;&gt;-->
+        <!-- 中间的按钮-->
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/Community_To_Message"
+            android:id="@+id/Message_To_Message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="42dp"
@@ -80,37 +70,40 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
 
-        <!--&lt;!&ndash;左边的按钮&ndash;&gt;-->
+        <!--左边的按钮-->
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/Community_To_Community"
+            android:id="@+id/Message_To_Community"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignTop="@+id/Community_To_Message"
             android:layout_marginLeft="60dp"
             android:layout_marginStart="60dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/community1"/>
+            app:srcCompat="@drawable/community1"
+            android:layout_alignTop="@+id/Message_To_Message"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
-        <!--&lt;!&ndash;右边的按钮&ndash;&gt;-->
+        <!--右边的按钮-->
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/Community_To_Record"
+            android:id="@+id/Message_To_Record"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/Community_To_Community"
             android:layout_marginEnd="60dp"
             android:layout_marginRight="60dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/recordroom" />
+            app:srcCompat="@drawable/recordroom"
+            android:layout_alignTop="@+id/Message_To_Message"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
         <ListView
-            android:id="@+id/listview_help_item"
+            android:id="@+id/Message_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
+
+
+
 </LinearLayout>

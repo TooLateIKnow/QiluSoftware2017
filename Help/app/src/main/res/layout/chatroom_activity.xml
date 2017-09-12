@@ -48,4 +48,32 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/ChatRoom_recycle_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/ChatRoom_inputText"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#DDDDDD"
+            android:hint="输入聊天内容"
+            android:maxLines="5"/>
+
+        <Button
+            android:id="@+id/ChatRoom_send"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="#33CC66"
+            android:textSize="23dp"
+            android:text="发 送"/>
+    </LinearLayout>
+
 </LinearLayout>

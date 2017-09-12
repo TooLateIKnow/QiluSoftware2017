@@ -305,6 +305,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         MenuItem item = menu.findItem(R.id.action_login).setChecked(true);
+        try{
+            //设置自定义图标可见
+            item.getClass().getDeclaredMethod("setOptionalIconsVisible",Boolean.TYPE);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
         if(ifLogin){
             item.setTitle("已登录");
             item.setEnabled(false);
@@ -384,6 +391,10 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             } else if (id == R.id.nav_record) {
                 Intent intent = new Intent(MainActivity.this,RecordActivity.class);
+                startActivity(intent);
+            } else if (id == R.id.nav_message){
+                //跳转到消息界面
+                Intent intent = new Intent(MainActivity.this,MessageActivity.class);
                 startActivity(intent);
             }
         }else{
