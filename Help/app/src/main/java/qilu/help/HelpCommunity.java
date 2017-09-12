@@ -63,7 +63,7 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.community_activity);
         init();
-        initHelpItem();//这个方法是将数据添加近list中
+        //initHelpItem();//这个方法是将提前转备好的数据添加近list中,现在把它移入广播中。记得到时候拿出来
         addListToAdapter();
     }
 
@@ -105,27 +105,52 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
     }
 
     //为了演示需要。提前准备好一些数据
-    public void initHelpItem(){
+    static public void initHelpItem(){
         HelpItem TangHelp = new HelpItem();
-        TangHelp.setHelp_item_username("汤求毅");
-        TangHelp.setHelp_item_content("在石油大学");
+        TangHelp.setHelp_item_username("木土土的");
+        TangHelp.setHelp_item_time("2017年9月14日 上午11点14分");
+        TangHelp.setHelp_item_location("石油大学 南教北门口");
+        TangHelp.setHelp_item_content("下大雨没有带伞，希望能有小伙伴送一把伞过来。");
         helpItemList.add(TangHelp);
 
         HelpItem TangHelp1 = new HelpItem();
-        TangHelp1.setHelp_item_username("雍振东");
-        TangHelp1.setHelp_item_content("在石油大学");
+        TangHelp1.setHelp_item_username("蓦然飞跃");
+        TangHelp1.setHelp_item_time("2017年9月14日 上午11点00分");
+        TangHelp1.setHelp_item_location("石油大学 北门外 麦趣尔蛋糕房");
+        TangHelp1.setHelp_item_content("求帮取快递");
         helpItemList.add(TangHelp1);
+
+        HelpItem TangHelp2 = new HelpItem();
+        TangHelp2.setHelp_item_username("荡荡");
+        TangHelp2.setHelp_item_time("2017年9月14日 上午10点24分");
+        TangHelp2.setHelp_item_location("家佳源购物广场二楼");
+        TangHelp2.setHelp_item_content("丢了咖啡色男士钱包，希望捡到的好心人联系我！");
+        helpItemList.add(TangHelp2);
+
+        HelpItem TangHelp3 = new HelpItem();
+        TangHelp3.setHelp_item_username("高富帅");
+        TangHelp3.setHelp_item_time("2017年9月14日 上午10点02分");
+        TangHelp3.setHelp_item_location("公路上");
+        TangHelp3.setHelp_item_content("车上的人中暑了，希望过往的司机师傅能给瓶水喝。");
+        helpItemList.add(TangHelp3);
+
+        HelpItem TangHelp4 = new HelpItem();
+        TangHelp4.setHelp_item_username("印团");
+        TangHelp4.setHelp_item_time("2017年9月14日 上午9点58分");
+        TangHelp4.setHelp_item_location("11楼422宿舍");
+        TangHelp4.setHelp_item_content("有需要打印文件的私聊我");
+        helpItemList.add(TangHelp4);
 
     }
 
     //这个方法完成的功能是，用户点击“发送请求”的时候，能往helpItemList中添加子项
     public void addToHelpItem(String name,String location,String date,String incident,boolean ifmine){
         //为了测试。先把时间地点和时间放在一个字符串中
-        StringBuilder helpcontent = new StringBuilder();
-        helpcontent.append(location).append(date).append(incident);
         HelpItem helpItem_new = new HelpItem();
         helpItem_new.setHelp_item_username(name);
-        helpItem_new.setHelp_item_content(helpcontent.toString());
+        helpItem_new.setHelp_item_time(date);
+        helpItem_new.setHelp_item_location(location);
+        helpItem_new.setHelp_item_content(incident);
         helpItem_new.setIfMine(ifmine);
         helpItemList.add(0,helpItem_new);//每次都让数据添加在第一行
     }
@@ -273,7 +298,9 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                 put_help_Dialog_location = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_location);
                 put_help_Dialog_date = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_date);
                 put_help_Dialog_incident = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_incident);
-
+                put_help_Dialog_username.setHint("输入用户名");
+                put_help_Dialog_location.setHint("输入求助的位置");
+                put_help_Dialog_date.setHint("输入求助的地点");
                 //设置对话框
                 AlertDialog.Builder dialog = new AlertDialog.Builder(HelpCommunity.this);
                 //.setIcon()

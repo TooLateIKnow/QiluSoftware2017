@@ -9,7 +9,9 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MessageActivity extends AppCompatActivity implements View.OnClickListener{
@@ -31,7 +33,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.message_activity);
 
         init();
-        initMessageItem();//这个方法是将数据添加近list中
+        //initMessageItem();//这个方法是将提前准备好的数据添加近list中，现在把他添加在广播中
         addListToAdapter();
     }
 
@@ -48,16 +50,31 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //为了演示需要。提前准备好一些数据
-    public void initMessageItem(){
+    static public void initMessageItem(){
+
         MessageItem item_one = new MessageItem();
-        item_one.setMessage_item_name("汤求毅");
-        item_one.setMessage_item_content("在石油大学");
+        item_one.setMessage_item_name("孤独的茶");
+        item_one.setMessage_item_content("你好，我在嘉年华电影院，我看看");
+        item_one.setMessage_item_time("2017.9.14");
         MessageItemList.add(item_one);
 
         MessageItem item_two = new MessageItem();
-        item_two.setMessage_item_name("雍振东");
-        item_two.setMessage_item_content("在石油大学");
+        item_two.setMessage_item_name("苏打水");
+        item_two.setMessage_item_content("同学你好，我也是石油大学的");
+        item_two.setMessage_item_time("2017.9.14");
         MessageItemList.add(item_two);
+
+        MessageItem item_three = new MessageItem();
+        item_three.setMessage_item_name("锦城江风");
+        item_three.setMessage_item_content("你好咧。我想我可以帮你");
+        item_three.setMessage_item_time("2017.9.14");
+        MessageItemList.add(item_three);
+
+        MessageItem item_four = new MessageItem();
+        item_four.setMessage_item_name("盒子先生");
+        item_four.setMessage_item_content("大佬你好，能给我帮助吗？");
+        item_four.setMessage_item_time("2017.9.14");
+        MessageItemList.add(item_four);
 
     }
     //将list映射到适配器中，然后将适配器添加给ListView
@@ -80,10 +97,12 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //往“消息大厅中添加记录”
-    static public void addRecord(String name,String content){
+    static public void addRecord(String name,String content,String time,boolean ifFirstOpen){
         MessageItem message = new MessageItem();
         message.setMessage_item_name(name);
+        message.setMessage_item_time(time);
         message.setMessage_item_content(content);
+        message.setIfFirstClick(ifFirstOpen);
         MessageItemList.add(message);
     }
 

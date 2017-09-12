@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 //TODO:这是一个在发布求助信息后启动的一个服务
 public class PutHelpIntentService extends IntentService {
@@ -24,8 +27,12 @@ public class PutHelpIntentService extends IntentService {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            //读取当前系统时间
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
+            Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+            String currentDate = formatter.format(curDate);
             //在“消息大厅”中添加记录
-            MessageActivity.addRecord("余成","我在石油大学，可以帮你买黄焖鸡");
+            MessageActivity.addRecord("余成","我在石油大学，可以帮你买黄焖鸡",currentDate,true);
             //给手机发送一个通知
             Intent Notificationintent = new Intent(PutHelpIntentService.this,MessageActivity.class);
             PendingIntent pi = PendingIntent.getActivity(PutHelpIntentService.this,0,Notificationintent,0);
