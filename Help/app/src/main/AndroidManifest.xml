@@ -35,6 +35,11 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!--
+            <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="M44h8yaIxxDyOMoZ3xeQB5jFR2gV9sXl" />
+        -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="M44h8yaIxxDyOMoZ3xeQB5jFR2gV9sXl" />
@@ -73,11 +78,11 @@
         <activity
             android:name=".SignInActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".HelpCommunity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ChatRoom"
             android:launchMode="singleTask"
@@ -88,10 +93,21 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecordActivity"
+        <activity
+            android:name=".RecordActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MessageActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".GiveHelpIntentService"
+            android:exported="false"></service>
+        <service
+            android:name=".PutHelpIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
