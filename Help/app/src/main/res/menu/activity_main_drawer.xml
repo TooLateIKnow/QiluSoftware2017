@@ -18,11 +18,11 @@
         </item>
         <item
             android:id="@+id/nav_setTel"
-            android:icon="@drawable/ic_menu_phone"
+            android:icon="@drawable/ic_menu_manage"
             android:title="更改手机号码" />
         <item
             android:id="@+id/nav_setMail"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_menu_manage"
             android:title="更改邮箱" />
         <item
             android:id="@+id/nav_setPersonal"
@@ -42,7 +42,7 @@
                 android:title="历史记录" />
             <item
                 android:id="@+id/nav_message"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/mes3"
                 android:title="消息"/>
         </menu>
     </item>

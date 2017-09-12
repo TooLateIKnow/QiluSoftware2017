@@ -10,44 +10,45 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#CCCCCC"
-        app:popupTheme="@style/AppTheme.PopupOverlay" >
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginRight="5dp"
-            android:layout_alignParentTop="true">
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="5dp">
 
             <Button
                 android:id="@+id/Message_back"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_gravity="left"
-                android:background="@drawable/back"
-                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="left"
+                android:background="@drawable/back" />
+
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginEnd="48dp"
+                android:layout_marginRight="48dp"
+                android:text="消息"
+                android:textColor="#333333"
+                android:textSize="25sp" />
 
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/messageroom"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/textView2"
-                android:layout_toStartOf="@+id/textView2" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="消息大厅"
-                android:textColor="#333333"
-                android:textSize="25sp"
-                android:id="@+id/textView2"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginRight="48dp"
-                android:layout_marginEnd="48dp" />
+                android:layout_toStartOf="@+id/textView2"
+                android:background="@drawable/messageroom" />
 
         </RelativeLayout>
 
@@ -65,7 +66,8 @@
             android:layout_marginBottom="42dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/messageroom"
+            app:srcCompat="@drawable/whitemes"
+            app:backgroundTint="#2DA8F6"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
 
@@ -78,7 +80,8 @@
             android:layout_marginStart="60dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/community1"
+            app:srcCompat="@drawable/whitehome"
+            app:backgroundTint="#2DA8F6"
             android:layout_alignTop="@+id/Message_To_Message"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
@@ -92,7 +95,8 @@
             android:layout_marginRight="60dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/recordroom"
+            app:srcCompat="@drawable/record2"
+            app:backgroundTint="#2DA8F6"
             android:layout_alignTop="@+id/Message_To_Message"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
