@@ -19,14 +19,14 @@
             android:layout_height="wrap_content">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ChatRoom_heTouxiang"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:background="@drawable/nav_icon"/>
             <!--左边的气泡-->
             <LinearLayout
                 android:layout_width="100dp"
                 android:layout_height="50dp"
-                android:background="@drawable/dialog_left">
+                android:background="@drawable/mes_right_small">
                 <TextView
                     android:id="@+id/ChatRoom_left_message_He_send"
                     android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
             <LinearLayout
                 android:layout_width="100dp"
                 android:layout_height="50dp"
-                android:background="@drawable/dialog_right">
+                android:background="@drawable/mes_left_small">
                 <TextView
                     android:id="@+id/ChatRoom_right_message_I_send"
                     android:layout_width="wrap_content"
@@ -65,8 +65,8 @@
             </LinearLayout>
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ChatRoom_myTouxiang"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:background="@drawable/nav_icon"/>
         </LinearLayout>
     </LinearLayout>

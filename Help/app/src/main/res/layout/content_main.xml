@@ -31,8 +31,8 @@
         android:layout_height="60dp"
         app:srcCompat="@android:drawable/stat_sys_phone_call"
         android:visibility="visible"
-        android:layout_marginBottom="39dp"
-        android:layout_alignBottom="@+id/OpenShare"
+        app:backgroundTint="#2DA8F6"
+        android:layout_above="@+id/OpenShortMessage"
         android:layout_centerHorizontal="true" />
 
     <Button

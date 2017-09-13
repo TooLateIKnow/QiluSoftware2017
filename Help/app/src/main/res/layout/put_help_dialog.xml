@@ -2,19 +2,20 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <TableRow>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="用户："
-            android:textSize="13pt"/>
+            android:textSize="10pt"/>
         <EditText
             android:id="@+id/put_help_Dialog_username"
             android:layout_width="270dp"
             android:layout_height="wrap_content"
-            android:textSize="13pt"
+            android:textSize="10pt"
             android:maxLines="1" />
     </TableRow>
 
@@ -23,12 +24,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="地点："
-            android:textSize="13pt"/>
+            android:textSize="10pt"/>
         <EditText
             android:id="@+id/put_help_Dialog_location"
             android:layout_width="270dp"
             android:layout_height="wrap_content"
-            android:textSize="13pt"
+            android:textSize="10pt"
             android:maxLines="3" />
     </TableRow>
 
@@ -37,13 +38,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="时间："
-            android:textSize="13pt"/>
+            android:textSize="10pt"/>
         <EditText
             android:id="@+id/put_help_Dialog_date"
             android:layout_width="270dp"
             android:layout_height="wrap_content"
             android:maxLines="2"
-            android:textSize="13pt" />
+            android:textSize="10pt" />
     </TableRow>
 
     <TableRow>
@@ -51,12 +52,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="事件："
-            android:textSize="13pt" />
+            android:textSize="10pt" />
         <EditText
             android:id="@+id/put_help_Dialog_incident"
             android:layout_width="270dp"
             android:layout_height="wrap_content"
-            android:textSize="13pt"
+            android:textSize="10pt"
             android:hint="请描述您遇到的事件"
             android:maxLines="4"/>
     </TableRow>
