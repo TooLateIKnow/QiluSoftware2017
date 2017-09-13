@@ -2,18 +2,16 @@ package qilu.help;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TableLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +29,16 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
     private RecyclerView msgRecyclerView;
     private ChatRoomMessageAdapter adapter;
 
-    //获得聊天对象的用户名
-    static public String chatusername;
+    //获得聊天对象的用户名,头像地址和施救/被救
+    static public String chatHeusername;
+    static public String chatHeTouxiang;
+    static public boolean chatIfIhelpOther;
+
+    //获得对话框中的控件
+    private TextView chatrooom_Dialog_heusername;
+    private TextView chatrooom_Dialog_location;
+    private TextView chatrooom_Dialog_date;
+    private TextView chatrooom_Dialog_incident;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +48,16 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
         //显示中间的名字
         TextView chatroonusername = (TextView)findViewById(R.id.ChatRoom_username);
         Intent intent = getIntent();
-        chatusername = intent.getStringExtra("extra_data");//获得上面传递过来的数据
-        chatroonusername.setText(chatusername);
+        chatHeusername = intent.getStringExtra("his Name");//获得上面传递过来的数据
+        chatHeTouxiang = intent.getStringExtra("his Touxiang");
+        chatIfIhelpOther = intent.getBooleanExtra("if i help Other or not",false);
+        chatroonusername.setText(chatHeusername);
 
         init();
 
         //首先初始化一些消息数据用于测试
         initMsgs();
         sendOrReciveMessage();
-
     }
     public void init(){
         ChatRoom_back = (Button)findViewById(R.id.ChatRoom_back);
@@ -72,15 +79,34 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
                 break;
             case R.id.ChatRoom_sure:
                 //弹出对话框
-                new AlertDialog.Builder(this).setTitle("确定这次交易！")
+                //弹出对话框
+                final TableLayout putHelpDialog = (TableLayout) getLayoutInflater().inflate(R.layout.put_help_dialog, null);
+                //对话框的控件添加信息
+                chatrooom_Dialog_heusername = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_username);
+                chatrooom_Dialog_location = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_location);
+                chatrooom_Dialog_date = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_date);
+                chatrooom_Dialog_incident = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_incident);
+                AlertDialog.Builder putIntoRecordDialog = new AlertDialog.Builder(ChatRoom.this);
+                putIntoRecordDialog.setTitle("确定这次交易！")
+                        .setView(putHelpDialog)
+                        .setCancelable(true)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setPositiveButton("确定",new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                //为了测试，自定义一些记录
-                                RecordActivity.addRecord("2010-12-1","青岛市黄岛区石油大学","车胎爆了");
-                                //关闭服务，还未关闭HelpCommunity中的GiveHelpIntentService类服务
-                            }}).show();
+                                //往记录中添加纪录
+                                RecordActivity.addRecord(chatHeusername, chatHeTouxiang, chatIfIhelpOther
+                                        ,chatrooom_Dialog_date.getText().toString()
+                                        ,chatrooom_Dialog_location.getText().toString()
+                                        ,chatrooom_Dialog_incident.getText().toString());
+                            }})
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                putIntoRecordDialog.show();
                 break;
         }
     }
@@ -90,7 +116,8 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
         ChatRoomMessage msg1 = new ChatRoomMessage("你好",ChatRoomMessage.TYPE_RECEIVED);
         msgList.add(msg1);
     }
-    //
+
+    //点击发送之后就可以发送一条消息
     public void sendOrReciveMessage(){
         inputText = (EditText)findViewById(R.id.ChatRoom_inputText);
         send = (Button)findViewById(R.id.ChatRoom_send);

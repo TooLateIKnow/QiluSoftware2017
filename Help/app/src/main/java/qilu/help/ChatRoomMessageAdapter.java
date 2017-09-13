@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by Y481 on 2017/9/11.
  */
@@ -22,20 +24,34 @@ public class ChatRoomMessageAdapter extends RecyclerView.Adapter<ChatRoomMessage
         TextView rightMsg;
 
         //表示的是聊天窗口上的用户名
-        private TextView myName;
-        private TextView heName;
+        /*private TextView myName;
+        private TextView heName;*/
+
+        //表示头像
+        private CircleImageView mytouxiang;
+        private CircleImageView hetouxiang;
 
         public ViewHolder(View view){
             super(view);
+
             leftLayout = (LinearLayout)view.findViewById(R.id.left_message);
             rightLayout = (LinearLayout)view.findViewById(R.id.Right_message);
-            leftMsg = (TextView)view.findViewById(R.id.ChatRoom_left_message_I_send);
-            rightMsg = (TextView)view.findViewById(R.id.ChatRoom_right_message_He_send);
+            leftMsg = (TextView)view.findViewById(R.id.ChatRoom_left_message_He_send);
+            rightMsg = (TextView)view.findViewById(R.id.ChatRoom_right_message_I_send);
 
-            myName = (TextView)view.findViewById(R.id.ChatRoom_myName);
+            /*myName = (TextView)view.findViewById(R.id.ChatRoom_myName);
             heName = (TextView)view.findViewById(R.id.ChatRoom_heName);
             myName.setText("我:");
-            heName.setText(ChatRoom.chatusername+":");
+            heName.setText(ChatRoom.chatHeusername+":");*/
+
+            mytouxiang = (CircleImageView)view.findViewById(R.id.ChatRoom_myTouxiang);
+            mytouxiang.setImageResource(R.drawable.nav_icon);
+            hetouxiang = (CircleImageView)view.findViewById(R.id.ChatRoom_heTouxiang);
+            if(ChatRoom.chatIfIhelpOther){
+                hetouxiang.setImageResource(R.drawable.ihelp);
+            }else{
+                hetouxiang.setImageResource(R.drawable.helpi);
+            }
         }
     }
 
@@ -53,15 +69,15 @@ public class ChatRoomMessageAdapter extends RecyclerView.Adapter<ChatRoomMessage
     public void onBindViewHolder(ViewHolder holder,int position){
         ChatRoomMessage msg = mMsgList.get(position);
         if(msg.getType() == ChatRoomMessage.TYPE_RECEIVED){
-            //表示收到消息，显示右边的布局
-            holder.rightLayout.setVisibility(View.VISIBLE);
-            holder.leftLayout.setVisibility(View.GONE);
-            holder.rightMsg.setText(msg.getContent());
-        }else if(msg.getType() == ChatRoomMessage.TYPE_SENT){
-            //表示发送消息，显示左边的布局
+            //表示收到消息，显示左边的布局
             holder.leftLayout.setVisibility(View.VISIBLE);
             holder.rightLayout.setVisibility(View.GONE);
             holder.leftMsg.setText(msg.getContent());
+        }else if(msg.getType() == ChatRoomMessage.TYPE_SENT){
+            //表示发送消息，显示有边的布局
+            holder.rightLayout.setVisibility(View.VISIBLE);
+            holder.leftLayout.setVisibility(View.GONE);
+            holder.rightMsg.setText(msg.getContent());
         }
     }
 

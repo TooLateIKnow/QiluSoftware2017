@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.v4.app.NotificationCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,14 +39,14 @@ public class GiveHelpIntentService extends IntentService {
             Date curDate = new Date(System.currentTimeMillis());//获取当前时间
             String currentDate = formatter.format(curDate);
             //在“消息大厅”中添加记录
-            MessageActivity.addRecord("周欢","我在石油大学北门蛋糕房，希望能得到您的帮助",currentDate,true);
+            MessageActivity.addRecord("木土土的","我在南教北门 ，下雨了没带伞，希望有人能捎我一程",currentDate,true,true);
             //给手机发送一个通知
             Intent Notificationintent = new Intent(GiveHelpIntentService.this,MessageActivity.class);
             PendingIntent pi = PendingIntent.getActivity(GiveHelpIntentService.this,0,Notificationintent,0);
             NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
             Notification notification = new android.support.v7.app.NotificationCompat.Builder(GiveHelpIntentService.this)
                     .setContentTitle("提示")
-                    .setContentText("周欢：我在石油大学北门蛋糕房，希望能得到您的帮助")
+                    .setContentText("木土土的：我在南教北门 ，下雨了没带伞，希望有人能捎我一程")
                     .setWhen(System.currentTimeMillis())
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))

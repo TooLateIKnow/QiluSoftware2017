@@ -8,8 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -38,16 +36,24 @@ public class MessageAdapter extends ArrayAdapter<MessageItem> {
         Message_time.setText(messageItem.getMessage_item_time());
 
         //匹配头像
+        //其实这个设置头像是需要使用item中的方法的。这里暂且不用，为了测试
         CircleImageView touxiang = (CircleImageView)view.findViewById(R.id.Message_touxiang);
-        if(messageItem.getMessage_item_name().equals("孤独的茶")){
-            touxiang.setImageResource(R.drawable.message);
-        }else if(messageItem.getMessage_item_name().equals("苏打水")){
-            touxiang.setImageResource(R.drawable.message1);
-        }else if(messageItem.getMessage_item_name().equals("锦城江风")){
-            touxiang.setImageResource(R.drawable.message2);
-        }else if(messageItem.getMessage_item_name().equals("盒子先生")){
-            touxiang.setImageResource(R.drawable.message3);
+        if(!messageItem.getIfIhelpOther()) {
+            if(messageItem.getMessage_item_name().equals("孤独的茶")){
+                touxiang.setImageResource(R.drawable.message);
+            }else if(messageItem.getMessage_item_name().equals("苏打水")){
+                touxiang.setImageResource(R.drawable.message1);
+            }else if(messageItem.getMessage_item_name().equals("锦城江风")){
+                touxiang.setImageResource(R.drawable.message2);
+            }else if(messageItem.getMessage_item_name().equals("盒子先生")){
+                touxiang.setImageResource(R.drawable.message3);
+            }else{
+                touxiang.setImageResource(R.drawable.helpi);
+            }
+        }else{
+            touxiang.setImageResource(R.drawable.ihelp);
         }
+
 
         //如果不是第一次点开这个消息，那么就不会有标志
         if(!messageItem.getIfFirstClick()){

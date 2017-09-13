@@ -2,27 +2,128 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp">
 
-    <TextView
-        android:id="@+id/Recorc_item_date"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/Record_Lefttouxiang"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:clickable="true"
+            android:src="@drawable/nav_icon" />
+
+        <TextView
+            android:id="@+id/Record_leftName"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:paddingLeft="65dp"
+            android:text=""
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/Record_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="帮助了"
+            android:textSize="20dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/Record_Righttouxiang"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:clickable="true"
+            android:src="@drawable/nav_icon"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+        <TextView
+            android:id="@+id/Record_rightName"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text=""
+            android:textSize="15dp"
+            android:gravity="center"
+            android:paddingRight="65dp"
+            android:layout_alignBottom="@+id/Record_Righttouxiang"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="日期："/>
-    <!--android:background="#00c484"-->
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:textSize="15dp"
+                android:text="日期："/>
+            <TextView
+                android:id="@+id/Recorc_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="测试日期1qqqqqqqqqqqqqqqqqqqqq"
+                android:maxLines="2"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:textSize="15dp"
+                android:text="地点："/>
+            <TextView
+                android:id="@+id/Record_item_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="测试地点1qqqqqqqqqqqqqqqqq"
+                android:maxLines="2"/>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/Record_item_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="地点："/>
-
-    <TextView
-        android:id="@+id/Record_item_incident"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="事件："/>
-    <!--格式为xxx帮助了xxx-->
-
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:textSize="15dp"
+            android:text="事件："/>
+            <TextView
+                android:id="@+id/Record_item_incident"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="测试事件1qqqqqqqqqqqqqqqqqq"
+                android:maxLines="4"/>
+        </LinearLayout>
+        <!--格式为xxx帮助了xxx-->
+    </LinearLayout>
 </LinearLayout>

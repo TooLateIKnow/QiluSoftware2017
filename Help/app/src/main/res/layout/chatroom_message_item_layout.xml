@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:padding = "10dp">
 
+    <!--左边的部分,就是对方的部分-->
     <LinearLayout
         android:id="@+id/left_message"
         android:orientation="vertical"
@@ -12,27 +13,32 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:padding="5dp">
-        <TextView
-            android:id="@+id/ChatRoom_myName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:text="用户名"/>
-
-        <!--也可以使用图片，不过首先要解决传递图片的问题-->
-
         <LinearLayout
-
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:background="@drawable/dialog_left">
-            <TextView
-                android:id="@+id/ChatRoom_left_message_I_send"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ChatRoom_heTouxiang"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/nav_icon"/>
+            <!--左边的气泡-->
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@drawable/dialog_left">
+                <TextView
+                    android:id="@+id/ChatRoom_left_message_He_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="30dp"
+                    android:layout_gravity="center"
+                    android:textSize="15dp" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
+    <!--右边的聊天部分，就是我的部分-->
     <LinearLayout
         android:id="@+id/Right_message"
         android:layout_width="wrap_content"
@@ -40,26 +46,28 @@
         android:layout_gravity="right"
         android:orientation="vertical"
         android:padding="5dp">
-
-        <TextView
-            android:id="@+id/ChatRoom_heName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="用户名"
-            android:textSize="20dp" />
-
-        <!--也可以使用图片，不过首先要解决传递图片的问题-->
-
         <LinearLayout
-
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:background="@drawable/dialog_right">
-
-            <TextView
-                android:id="@+id/ChatRoom_right_message_He_send"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <!--右边的气泡-->
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@drawable/dialog_right">
+                <TextView
+                    android:id="@+id/ChatRoom_right_message_I_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingLeft="10dp"
+                    android:textSize="15dp" />
+            </LinearLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ChatRoom_myTouxiang"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/nav_icon"/>
         </LinearLayout>
     </LinearLayout>
 
