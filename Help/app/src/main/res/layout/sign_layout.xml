@@ -88,7 +88,8 @@
             android:layout_alignStart="@+id/Sign_mail_editText"
             android:layout_below="@+id/textView"
             android:background="@drawable/textshape"
-            android:hint="输入6位数字作为您的密码"
+            android:hint="设置您的密码(大于四位)"
+            android:inputType="textPassword"
             android:textColorHint="#666666" />
 
         <EditText
@@ -100,7 +101,8 @@
             android:layout_marginTop="17dp"
             android:background="@drawable/textshape"
             android:hint="再一次输入您的密码"
-            android:textColorHint="#666666" />
+            android:textColorHint="#666666"
+            android:inputType="textPassword"/>
 
         <CheckBox
             android:id="@+id/Sign_checkBox"
@@ -128,7 +130,6 @@
             android:id="@+id/Sign_cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_below="@+id/Sign_checkBox"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_shape"

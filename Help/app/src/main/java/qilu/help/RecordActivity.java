@@ -1,14 +1,12 @@
 package qilu.help;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +38,25 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
         ListView recordList = (ListView)findViewById(R.id.Record_list);
         recordList.setAdapter(adapter);
     }
-    static public void addRecord(String date,String location,String incident){
+    //这个方法是动态的在记录活动中添加纪录，但是再添加之前必须得到是施救还是被救的标记
+    //所以需要其他的方法judgeIfIhelpOther
+    static public void addRecord(String chatHeusername,String chatHeTouxiang,Boolean chatIfIhelpOther,
+                                 String date,String location,String incident){
         RecordItem record = new RecordItem();
+        if(chatIfIhelpOther){
+            //如果是我帮助他
+            record.setRecord_left_name("我");
+            record.setRecord_right_name(chatHeusername);
+            //record.setRecord_left_touxiang();//我的头像
+            //record.setRecord_right_touxiang(chatHeTouxiang);
+        }else{
+            //如果是别人帮助了我
+            record.setRecord_left_name(chatHeusername);
+            record.setRecord_right_name("我");
+            //record.setRecord_left_touxiang(chatHeTouxiang);
+            //record.setRecord_right_touxiang();//我的头像
+        }
+        record.setRecord_item_ifIhelpOther(chatIfIhelpOther);
         record.setRecord_item_date(date);
         record.setRecord_item_location(location);
         record.setRecord_item_incident(incident);

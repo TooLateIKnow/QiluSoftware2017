@@ -3,25 +3,22 @@ package qilu.help;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -30,7 +27,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -168,6 +164,10 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        Intent intent = getIntent();
+        String data = intent.getStringExtra("phone");
+        mEmailView.setText(data);
     }
 
     private void populateAutoComplete() {
@@ -227,18 +227,18 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
         // 检查密码
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+            mPasswordView.setError("注册时的密码大于四位");
             focusView = mPasswordView;
             cancel = true;
         }
 
         // 检查邮箱地址
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
+            mEmailView.setError("请输入注册使用的手机号码");
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
+        } else if (!isPhoneValid(email)) {
+            mEmailView.setError("手机号码需要十一位");
             focusView = mEmailView;
             cancel = true;
         }
@@ -284,13 +284,18 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         }).start();
 
     }
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
+    static public boolean isEmailValid(String email) {
+        //TODO: 判断邮箱中有没有@
         return email.contains("@");
     }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
+    static public boolean isPhoneValid(String phone){
+        //TODO: 判断手机号有没有四位
+        return phone.length()==11;
+    }
+
+    static public boolean isPasswordValid(String password) {
+        //TODO: 要求密码长度大于四
         return password.length() > 4;
     }
 

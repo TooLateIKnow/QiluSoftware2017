@@ -1,17 +1,15 @@
 package qilu.help;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MessageActivity extends AppCompatActivity implements View.OnClickListener{
@@ -90,19 +88,22 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
             public void onItemClick(AdapterView<?>parent,View view,int position,long id){
                 MessageItem messageItem = MessageItemList.get(position); //获得了那个子项
                 Intent intent = new Intent("qilu.help.ACTION_CHAT_START");
-                intent.putExtra("extra_data",messageItem.getMessage_item_name());
+                intent.putExtra("his Name",messageItem.getMessage_item_name());
+                intent.putExtra("his Touxiang",messageItem.getMessage_item_touxiang());
+                intent.putExtra("if i help Other or not",messageItem.getIfIhelpOther());
                 startActivity(intent);
             }
         });
     }
 
     //往“消息大厅中添加记录”
-    static public void addRecord(String name,String content,String time,boolean ifFirstOpen){
+    static public void addRecord(String name,String content,String time,boolean ifFirstOpen,boolean ifIhelpOther){
         MessageItem message = new MessageItem();
         message.setMessage_item_name(name);
         message.setMessage_item_time(time);
         message.setMessage_item_content(content);
         message.setIfFirstClick(ifFirstOpen);
+        message.setIfIhelpOther(ifIhelpOther);
         MessageItemList.add(message);
     }
 

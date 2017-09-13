@@ -1,11 +1,10 @@
 package qilu.help;
 
+import android.content.ContentValues;
 import android.content.Intent;
-import android.provider.MediaStore;
-import android.provider.Settings;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -14,18 +13,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-//import net.sf.json.JSONObject;
-
-import com.baidu.mapapi.map.MapBaseIndoorMapInfo;
-
-import net.sf.json.JSONException;
-import net.sf.json.JSONSerializer;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import org.json.JSONObject;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
+
+//import net.sf.json.JSONObject;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -107,24 +99,65 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         switch(v.getId()){
             case R.id.Sign_sure_button:
                 username = Sign_name_editText.getText().toString().trim();
-                mobilephone = Sign_phone_editText.getText().toString().trim();
+                mobilephone = Sign_phone_editText.getText().toString();
                 usermail = Sign_mail_editText.getText().toString().trim();
                 //usersex 已经赋值完毕了
-                password = Sign_password_textView.getText().toString().trim();
+                password = Sign_password_textView.getText().toString();
                 repassword= Sign_Repassword_textView.getText().toString().trim();
-                //调用方法
+                //调用方法，判断输入是否合法，合法就是ifOK。
                 JudgeIegal(username,mobilephone,usermail,password,repassword,usersex);
                 if(ifOk) {
                     //上传数据
                     DataToBeanUser();//传入Bean
                     connectToServer();//传入服务器
                 }
+
+
+                //为了测试，不管是不是注册成功，都显示成功.
+                //照理说应该是根据服务器返回的消息进行判断的
+                MainActivity.ifSign = true;
+                //然后将这些注册信息放入表中
+                try{
+                    MyDatabaseHelper dbHelper;
+                    dbHelper = new MyDatabaseHelper(this,"USERS.db",null,2);//创建数据库;
+                    dbHelper.getWritableDatabase();
+                    //向数据库中添加数据
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put("phone",Integer.getInteger(mobilephone));
+                    values.put("name",username);
+                    values.put("mail",usermail);
+                    values.put("sex",usersex);
+                    values.put("password",Integer.getInteger(password));
+                    db.insert("user",null,values);
+
+                    MainActivity.readFromDatabase(dbHelper);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                /////////////////////////////////////////
+
+                try {
+                    Thread.currentThread().sleep(1000);//阻断1秒
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 if(MainActivity.ifSign){
-                    Toast.makeText(SignInActivity.this,"注册成功！",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignInActivity.this,"注册成功！快去登录吧!!",Toast.LENGTH_SHORT).show();
+                    try {
+                        Thread.currentThread().sleep(2000);//阻断2秒
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Intent intent = new Intent(SignInActivity.this,Login.class);
+                    intent.putExtra("phone","17854212445");
+                    startActivity(intent);
                 }
                 if(ifExist){
                     Toast.makeText(SignInActivity.this,"用户名已经存在！",Toast.LENGTH_SHORT).show();
                 }
+
                 break;
             case R.id.Sign_cancel_button:
                 Intent intent_cancel = new Intent(SignInActivity.this,Login.class);

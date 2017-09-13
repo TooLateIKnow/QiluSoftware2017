@@ -3,46 +3,39 @@ package qilu.help;
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.content.ClipData;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PixelFormat;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.test.suitebuilder.TestMethod;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.HeaderViewListAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +45,6 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
@@ -68,7 +60,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,9 +80,9 @@ public class MainActivity extends AppCompatActivity
     public static final int CHOOSE_PHOTO = 2;
     private CircleImageView picture;
     private Uri imageUri;
-    private TextView name;    static public String sendingname = null;//用来传递用户名
-    private TextView tel;
-    private TextView mail;
+    static private TextView name;    static public String sendingname = null;//用来传递用户名
+    static private TextView tel;
+    static private TextView mail;
 
     private FloatingActionButton OpenPhone;
     private Button OpenShare;
@@ -186,7 +177,7 @@ public class MainActivity extends AppCompatActivity
         }
         save();
         load();
-
+        //readFromDatabase();//将数据库中的数据读出来
     }
 
     //实现实时定位
@@ -283,6 +274,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onRestart(){
         super.onRestart();
+        //readFromDatabase();
     }
 
     @Override//点击背景
@@ -559,6 +551,17 @@ public class MainActivity extends AppCompatActivity
                 });
         builder.show();
     }
+    //插入数据库
+    public void updataDatabase(String item,String number,MyDatabaseHelper dbHelper){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        if(item.equals("phone")||item.equals("password")){
+            values.put(item,Integer.getInteger(number));
+        }else{
+            values.put(item,number);
+        }
+        db.update("user",values,null,null);
+    }
 
     //验证手机号
     public static boolean isMobile(String number) {
@@ -675,5 +678,18 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+    }
+
+    static public void readFromDatabase(MyDatabaseHelper dbHelper){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("user",null,null,null,null,null,null);
+        if(cursor.moveToFirst()){
+            do{
+                name.setText(cursor.getString(cursor.getColumnIndex("name")));
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        tel.setText("17854212445");
+        mail.setText("258132@163.com");
     }
 }

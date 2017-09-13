@@ -11,6 +11,7 @@ public class ChatRoomMessage {
     private String content;
     private int type;
     private String username;
+    private String touxiang;
 
     public ChatRoomMessage(String content,int type/*,String username*/){
         this.content = content;
@@ -27,4 +28,6 @@ public class ChatRoomMessage {
     }
 
     public String getUsername(){return username;}
+
+    public String gettouxiang(){return touxiang;}
 }
