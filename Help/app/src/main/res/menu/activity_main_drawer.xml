@@ -30,12 +30,12 @@
             android:title="修改用户名" />
     </group>
 
-    <item android:title="帮帮社区">
+    <item android:title="帮我社区">
         <menu>
             <item
                 android:id="@+id/nav_space"
                 android:icon="@drawable/ic_menu_share"
-                android:title="帮助空间" />
+                android:title="求助大厅" />
             <item
                 android:id="@+id/nav_record"
                 android:icon="@drawable/ic_menu_send"
