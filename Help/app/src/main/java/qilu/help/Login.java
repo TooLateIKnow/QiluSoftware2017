@@ -27,6 +27,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -242,6 +245,14 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             focusView = mEmailView;
             cancel = true;
         }
+
+        /*//现在只有17854212445,922922才可以登录
+        if(mEmailView.equals("17854212445")&&mPasswordView.equals("922922")){
+            Toast.makeText(this,"成功登录",Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this,"密码错误",Toast.LENGTH_SHORT).show();
+            cancel = true;
+        }*/
 
         if (cancel) {//如果检查不合格
             focusView.requestFocus();

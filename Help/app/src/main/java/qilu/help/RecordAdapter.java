@@ -11,6 +11,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static qilu.help.MainActivity.imageUri;
 import static qilu.help.R.id.Recorc_item_date;
 
 /**
@@ -44,14 +45,14 @@ public class RecordAdapter extends ArrayAdapter<RecordItem> {
         CircleImageView righttouxiang = (CircleImageView)view.findViewById(R.id.Record_Righttouxiang);
         if(recordItem.getRecord_item_ifIhelpOther()){
             //设置左边的头像是我的头像
-            /*lefttouxiang.setImageResource();*/
+            lefttouxiang.setImageURI(imageUri);
             //设置右边的头像是我帮助的人的头像
             righttouxiang.setImageResource(R.drawable.tang);
         }else{
             //设置左边的头像是帮助我的人的头像
             lefttouxiang.setImageResource(R.drawable.helpi);
             //设置右边的头像是我的头像
-            /*righttouxiang.setImageResource();*/
+            righttouxiang.setImageURI(imageUri);
         }
         return view;
     }

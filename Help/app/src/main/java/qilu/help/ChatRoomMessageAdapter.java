@@ -1,5 +1,7 @@
 package qilu.help;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,9 +9,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static qilu.help.MainActivity.imageUri;
 
 /**
  * Created by Y481 on 2017/9/11.
@@ -45,7 +50,8 @@ public class ChatRoomMessageAdapter extends RecyclerView.Adapter<ChatRoomMessage
             heName.setText(ChatRoom.chatHeusername+":");*/
 
             mytouxiang = (CircleImageView)view.findViewById(R.id.ChatRoom_myTouxiang);
-            mytouxiang.setImageResource(R.drawable.nav_icon);
+            mytouxiang.setImageURI(imageUri);
+            //mytouxiang.setImageResource(R.drawable.nav_icon);
             hetouxiang = (CircleImageView)view.findViewById(R.id.ChatRoom_heTouxiang);
             if(ChatRoom.chatIfIhelpOther){
                 hetouxiang.setImageResource(R.drawable.ihelp);

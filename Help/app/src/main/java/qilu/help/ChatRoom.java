@@ -90,7 +90,7 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
                 putIntoRecordDialog.setTitle("确定这次交易！")
                         .setView(putHelpDialog)
                         .setCancelable(true)
-                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setIcon(android.R.drawable.ic_menu_help)
                         .setPositiveButton("确定",new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

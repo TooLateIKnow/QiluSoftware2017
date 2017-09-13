@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO = 2;
     private CircleImageView picture;
-    private Uri imageUri;
+    static public Uri imageUri;//存放拍照后的图片地址
     static private TextView name;    static public String sendingname = null;//用来传递用户名
     static private TextView tel;
     static private TextView mail;
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity
     public void getCurrebtPosition(BDLocation location){
         //存储当前详细方位
         currentPosition = new StringBuilder();
-        currentPosition.append("当前位置是：  纬度：").append(location.getLatitude()).append("   ");
+        currentPosition.append("纬度：").append(location.getLatitude()).append("   ");
         currentPosition.append("经度：").append(location.getLongitude()).append("\n");
         currentPosition.append(location.getAddrStr()).append("\n");
         sendingCurrentposition = currentPosition.toString();//将当前位置信息发送出去
