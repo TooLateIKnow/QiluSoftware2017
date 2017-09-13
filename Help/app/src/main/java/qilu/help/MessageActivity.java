@@ -91,7 +91,9 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
                 intent.putExtra("his Name",messageItem.getMessage_item_name());
                 intent.putExtra("his Touxiang",messageItem.getMessage_item_touxiang());
                 intent.putExtra("if i help Other or not",messageItem.getIfIhelpOther());
+                messageItem.setIfFirstClick(false);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -121,7 +123,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent_Message_To_Record);
                 break;
             case R.id.Message_back:
-                finish();
+                Intent intent = new Intent(MessageActivity.this,HelpCommunity.class);
+                startActivity(intent);
                 break;
         }
     }

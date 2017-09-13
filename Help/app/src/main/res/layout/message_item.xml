@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginBottom="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -52,7 +53,8 @@
             android:layout_alignParentTop="true"
             android:orientation="vertical"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true">
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="7dp">
 
             <TextView
                 android:id="@+id/Message_time"
@@ -79,5 +81,12 @@
         </RelativeLayout>
     </RelativeLayout>
 
+    <!--下划线-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD">
+    </LinearLayout>
+    <!--下划线-->
 
 </LinearLayout>

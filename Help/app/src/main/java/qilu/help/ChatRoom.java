@@ -75,7 +75,8 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
     public void onClick(View v){
         switch(v.getId()){
             case R.id.ChatRoom_back:
-                finish();
+                Intent intent = new Intent(ChatRoom.this,MessageActivity.class);
+                startActivity(intent);
                 break;
             case R.id.ChatRoom_sure:
                 //弹出对话框
@@ -90,7 +91,7 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
                 putIntoRecordDialog.setTitle("确定这次交易！")
                         .setView(putHelpDialog)
                         .setCancelable(true)
-                        .setIcon(android.R.drawable.ic_menu_help)
+                        .setIcon(android.R.drawable.ic_menu_agenda)
                         .setPositiveButton("确定",new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

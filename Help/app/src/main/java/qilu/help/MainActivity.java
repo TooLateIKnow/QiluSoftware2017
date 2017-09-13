@@ -79,7 +79,9 @@ public class MainActivity extends AppCompatActivity
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO = 2;
     private CircleImageView picture;
-    static public Uri imageUri;//存放拍照后的图片地址
+
+    static public Uri imageUri;//存放拍照后的图片地址00
+
     static private TextView name;    static public String sendingname = null;//用来传递用户名
     static private TextView tel;
     static private TextView mail;
@@ -452,11 +454,13 @@ public class MainActivity extends AppCompatActivity
             imagePath= uri.getPath();
         }
         displayImage(imagePath);
+        imageUri = uri;//这个imageuri是用来传递图片的
     }
     //4.4版本以前打开相册
     private void handleImageBeforeKitKat(Intent data){
         Uri uri = data.getData();
         String imagePath = getImagePath(uri,null);
+        imageUri = uri;//这个imageuri是用来传递图片的
     }
     //获取相册图片的真实路径
     private String getImagePath(Uri uri,String selection){
@@ -680,6 +684,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    //为了测试写的方法
     static public void readFromDatabase(MyDatabaseHelper dbHelper){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query("user",null,null,null,null,null,null);
@@ -691,5 +696,12 @@ public class MainActivity extends AppCompatActivity
         cursor.close();
         tel.setText("17854212445");
         mail.setText("258132@163.com");
+    }
+    //为了测试写的方法
+    static public void ceshifangfa(){
+        name.setText("木土土的");
+        tel.setText("tel: "+"17854212445");
+        mail.setText("mail: "+"258312@163.com");
+
     }
 }

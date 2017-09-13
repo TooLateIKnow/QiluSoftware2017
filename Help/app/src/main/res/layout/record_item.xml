@@ -3,16 +3,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="10dp">
+    android:layout_marginTop="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp">
+        android:layout_height="60dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/Record_Lefttouxiang"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -23,16 +23,12 @@
             android:id="@+id/Record_leftName"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
             android:gravity="center"
-            android:paddingLeft="65dp"
             android:text="用户1"
-
-            android:textSize="15dp" />
+            android:textSize="20dp"
+            android:layout_alignBottom="@+id/Record_help"
+            android:layout_toRightOf="@+id/Record_Lefttouxiang"
+            android:layout_toEndOf="@+id/Record_Lefttouxiang" />
 
         <TextView
             android:id="@+id/Record_help"
@@ -45,8 +41,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/Record_Righttouxiang"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:clickable="true"
             android:src="@drawable/nav_icon"
             android:layout_alignParentTop="true"
@@ -56,13 +52,12 @@
             android:id="@+id/Record_rightName"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:text=""
-            android:textSize="15dp"
+            android:text="用户2"
+            android:textSize="20dp"
             android:gravity="center"
-            android:paddingRight="65dp"
-            android:layout_alignBottom="@+id/Record_Righttouxiang"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignBottom="@+id/Record_help"
+            android:layout_toLeftOf="@+id/Record_Righttouxiang"
+            android:layout_toStartOf="@+id/Record_Righttouxiang" />
 
     </RelativeLayout>
 
@@ -77,7 +72,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
+                android:paddingLeft="15dp"
                 android:paddingTop="3dp"
                 android:paddingBottom="3dp"
                 android:textSize="15dp"
@@ -96,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
+                android:paddingLeft="15dp"
                 android:paddingTop="3dp"
                 android:paddingBottom="3dp"
                 android:textSize="15dp"
@@ -115,7 +110,7 @@
             <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
+            android:paddingLeft="15dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
             android:textSize="15dp"
@@ -129,4 +124,13 @@
         </LinearLayout>
         <!--格式为xxx帮助了xxx-->
     </LinearLayout>
+
+    <!--下划线-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD">
+    </LinearLayout>
+    <!--下划线-->
+
 </LinearLayout>

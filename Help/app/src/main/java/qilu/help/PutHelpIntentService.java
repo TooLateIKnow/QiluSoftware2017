@@ -42,7 +42,7 @@ public class PutHelpIntentService extends IntentService {
                     .setContentText("余成:我在石油大学，可以帮你买黄焖鸡")
                     .setWhen(System.currentTimeMillis())
                     .setSmallIcon(R.mipmap.ic_launcher)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.helpi))
                     .setContentIntent(pi)
                     .setAutoCancel(true)
                     .setVibrate(new long[]{0,1000,1000,1000})

@@ -169,7 +169,8 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                 startActivity(Community_To_RecordIntent);
                 break;
             case R.id.Community_back:
-                finish();
+                Intent intent = new Intent(HelpCommunity.this,MainActivity.class);
+                startActivity(intent);
                 break;
             case R.id.Community_puthelp:
                 //读取当前系统时间

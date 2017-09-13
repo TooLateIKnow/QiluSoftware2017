@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static qilu.help.MainActivity.ceshifangfa;
 
 /*public class Login extends AppCompatActivity implements View.OnClickListener{
 
@@ -246,11 +247,10 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             cancel = true;
         }
 
-        /*//现在只有17854212445,922922才可以登录
-        if(mEmailView.equals("17854212445")&&mPasswordView.equals("922922")){
-            Toast.makeText(this,"成功登录",Toast.LENGTH_SHORT).show();
+        //现在只有17854212445,922922才可以登录
+        /*if(mEmailView.equals("17854212445")&&mPasswordView.equals("922922")){
         }else{
-            Toast.makeText(this,"密码错误",Toast.LENGTH_SHORT).show();
+            mPasswordView.setError("密码错误！");
             cancel = true;
         }*/
 
@@ -271,10 +271,9 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             @Override
             public void run() {
                 try{
-                    //为了测试直接登录
+                    //为了测试直接登录,这个本来应该写在广播中
                     Intent intentLogin = new Intent("HAS.LOGINED.IN.SUCCEED");
                     sendBroadcast(intentLogin);
-
 
                     String urlStr="http://172.24.237.151:50000/HelpServer/loginingservlet";//设置路径
                     //下面是写入服务器中的数据

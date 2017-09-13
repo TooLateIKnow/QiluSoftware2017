@@ -8,7 +8,7 @@ public class MessageItem {
     private String Message_item_name;
     private String Message_item_content;
     private String Message_item_time;
-    private String Message_item_touxiang;  //
+    private String Message_item_touxiang;
 
     private boolean ifFirstClick = false;
     private boolean ifIhelpOther = false;//标记是不是我帮助了别人
