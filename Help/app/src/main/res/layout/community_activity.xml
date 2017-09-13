@@ -80,7 +80,9 @@
             android:layout_marginBottom="42dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/messageroom"
+            app:backgroundTint="#2DA8F6"
+            app:srcCompat="@drawable/whitemes"
+
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
 
@@ -96,7 +98,8 @@
             android:layout_marginStart="60dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/community1"/>
+            app:backgroundTint="#2DA8F6"
+            app:srcCompat="@drawable/whitehome"/>
 
         <!--&lt;!&ndash;右边的按钮&ndash;&gt;-->
         <android.support.design.widget.FloatingActionButton
@@ -110,7 +113,8 @@
             android:layout_marginRight="60dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/recordroom" />
+            app:backgroundTint="#2DA8F6"
+            app:srcCompat="@drawable/record2" />
 
         <ListView
             android:id="@+id/listview_help_item"
