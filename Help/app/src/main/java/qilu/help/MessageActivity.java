@@ -53,25 +53,25 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         MessageItem item_one = new MessageItem();
         item_one.setMessage_item_name("孤独的茶");
         item_one.setMessage_item_content("你好，我在嘉年华电影院，我看看");
-        item_one.setMessage_item_time("2017.9.14");
+        item_one.setMessage_item_time("2017年9月10日12:34:43");
         MessageItemList.add(item_one);
 
         MessageItem item_two = new MessageItem();
         item_two.setMessage_item_name("苏打水");
         item_two.setMessage_item_content("同学你好，我也是石油大学的");
-        item_two.setMessage_item_time("2017.9.14");
+        item_two.setMessage_item_time("2017年9月11日14:30:40");
         MessageItemList.add(item_two);
 
         MessageItem item_three = new MessageItem();
         item_three.setMessage_item_name("锦城江风");
         item_three.setMessage_item_content("你好咧。我想我可以帮你");
-        item_three.setMessage_item_time("2017.9.14");
+        item_three.setMessage_item_time("2017年9月12日15:20:13");
         MessageItemList.add(item_three);
 
         MessageItem item_four = new MessageItem();
         item_four.setMessage_item_name("盒子先生");
         item_four.setMessage_item_content("大佬你好，能给我帮助吗？");
-        item_four.setMessage_item_time("2017.9.14");
+        item_four.setMessage_item_time("2017年9月13日17:24:13");
         MessageItemList.add(item_four);
 
     }

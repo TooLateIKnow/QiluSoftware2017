@@ -18,10 +18,11 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/head_CircleImageView"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:src="@drawable/nav_icon"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:layout_centerVertical="true"
         android:clickable="true"/>
         <TextView
             android:id="@+id/name"
@@ -30,7 +31,7 @@
             android:layout_gravity="center_vertical"
             android:layout_height="wrap_content"
             android:textColor="#FFF"
-            android:textSize="35sp"
+            android:textSize="25sp"
             android:text="用户名"
             android:maxLines="2"/>
 </LinearLayout>
@@ -45,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
             android:text="tel:"
             android:textColor="#4B4B4B"
             android:textSize="20sp"/>
