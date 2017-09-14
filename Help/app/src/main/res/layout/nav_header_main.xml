@@ -49,13 +49,13 @@
             android:layout_marginTop="0dp"
             android:text="tel:"
             android:textColor="#4B4B4B"
-            android:textSize="20sp"/>
+            android:textSize="18sp"/>
         <TextView
             android:id="@+id/mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Email:"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColor="#4B4B4B"
             android:layout_marginLeft="10dp"/>
 
