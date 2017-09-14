@@ -172,11 +172,6 @@ public class MainActivity extends AppCompatActivity
         OpenShortMessage.setOnClickListener(this);
 
         //读取文件
-        if(ifLogin){
-            Toast.makeText(this,"1",Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(this,"0",Toast.LENGTH_SHORT).show();
-        }
         save();
         load();
         //readFromDatabase();//将数据库中的数据读出来
