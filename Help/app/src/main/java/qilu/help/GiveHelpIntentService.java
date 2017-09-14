@@ -38,18 +38,19 @@ public class GiveHelpIntentService extends IntentService {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
             Date curDate = new Date(System.currentTimeMillis());//获取当前时间
             String currentDate = formatter.format(curDate);
+
             //在“消息大厅”中添加记录
-            MessageActivity.addRecord("木土土的","我在南教北门 ，下雨了没带伞，希望有人能捎我一程",currentDate,true,true);
+            MessageActivity.addRecord(HelpCommunity.helpname+":","感谢你愿意帮我!",currentDate,true,true,HelpCommunity.imageID);
             //给手机发送一个通知
             Intent Notificationintent = new Intent(GiveHelpIntentService.this,MessageActivity.class);
             PendingIntent pi = PendingIntent.getActivity(GiveHelpIntentService.this,0,Notificationintent,0);
             NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
             Notification notification = new android.support.v7.app.NotificationCompat.Builder(GiveHelpIntentService.this)
                     .setContentTitle("提示")
-                    .setContentText("木土土的：我在南教北门 ，下雨了没带伞，希望有人能捎我一程")
+                    .setContentText(HelpCommunity.helpname+"感谢你愿意帮我")
                     .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
+                    .setSmallIcon(R.mipmap.logo_new)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.logo_new))
                     .setContentIntent(pi)
                     .setAutoCancel(true)
                     .setVibrate(new long[]{0,1000,1000,1000})

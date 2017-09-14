@@ -3,6 +3,7 @@ package qilu.help;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.LabeledIntent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,17 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static qilu.help.MainActivity.imageUri;
+
 /**
  * Created by Y481 on 2017/9/9.
  */
 
 public class HelpCommunityAdapter extends ArrayAdapter<HelpItem> {
     private int resourceId;
+
+    static public Uri HisHeadImageUri;
+
     public HelpCommunityAdapter(Context context,int textVieWResourceId,List<HelpItem> objects){
         super(context,textVieWResourceId,objects);
         resourceId = textVieWResourceId;
@@ -54,11 +60,28 @@ public class HelpCommunityAdapter extends ArrayAdapter<HelpItem> {
             touxiang.setImageResource(R.drawable.tang3);
         }else if(helpItem.getHelp_item_username().equals("印团")){
             touxiang.setImageResource(R.drawable.tang4);
+        }else{
+            touxiang.setImageURI(imageUri);
         }
 
         ImageView help_item_tongzhi = (ImageView)view.findViewById(R.id.help_item_tongzhi);
         help_item_tongzhi.setVisibility(View.INVISIBLE);
 
         return view;
+    }
+    public int getImageResourceId(String name) {
+        R.drawable drawables=new R.drawable();
+        //默认的id
+        int resId=0x7f02000b;
+        try {
+            //根据字符串字段名，取字段//根据资源的ID的变量名获得Field的对象,使用反射机制来实现的
+            java.lang.reflect.Field field=R.drawable.class.getField(name);
+            //取值
+            resId=(Integer)field.get(drawables);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return resId;
     }
 }

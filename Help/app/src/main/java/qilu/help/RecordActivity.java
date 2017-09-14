@@ -76,17 +76,17 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onClick(View v){
-        switch (v.getId()){
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.Record_back:
                 finish();
                 break;
             case R.id.Record_To_Message:
-                Intent intent_Record_To_Message = new Intent(RecordActivity.this,MessageActivity.class);
+                Intent intent_Record_To_Message = new Intent(RecordActivity.this, MessageActivity.class);
                 startActivity(intent_Record_To_Message);
                 break;
             case R.id.Record_To_Community:
-                Intent intent_Record_To_Community = new Intent(RecordActivity.this,HelpCommunity.class);
+                Intent intent_Record_To_Community = new Intent(RecordActivity.this, HelpCommunity.class);
                 startActivity(intent_Record_To_Community);
                 break;
             case R.id.Record_To_Record:

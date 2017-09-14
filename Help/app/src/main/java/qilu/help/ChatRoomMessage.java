@@ -19,7 +19,9 @@ public class ChatRoomMessage {
         /*this.username = username;*/
     }
 
-    public String getContent(){
+    public void setContent(String content){
+        this.content = content;
+    }public String getContent(){
         return content;
     }
 
@@ -27,7 +29,14 @@ public class ChatRoomMessage {
         return type;
     }
 
-    public String getUsername(){return username;}
+    public void setTouxiang(String touxiang){
+        this.touxiang = touxiang;
+    }public String gettouxiang(){return touxiang;}
 
-    public String gettouxiang(){return touxiang;}
+    public void setUsername(String username){
+        this.username = username;
+    }public String getUsername(){return username;}
+
+
+
 }

@@ -57,6 +57,10 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
 
     String helpDate = null;//用于存储当前时间
 
+    //传输头像
+    static public String  imageID;
+    static public String helpname;
+
     static private List<HelpItem> helpItemList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +86,8 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                 if(helpItem.getIfMine()){
                     initPopup(view,position,helpItem);
                 }else{
-                    showInfo(helpItem.getHelp_item_username(),helpItem.getHelp_item_content());
+                    showInfo(helpItem.getHelp_item_username(),helpItem.getHelp_item_content(),
+                            helpItem.getTouxiang());
                 }
 
             }
@@ -111,6 +116,7 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         TangHelp.setHelp_item_time("2017年9月14日 上午11点14分");
         TangHelp.setHelp_item_location("石油大学 南教北门口");
         TangHelp.setHelp_item_content("下大雨没有带伞，希望能有小伙伴送一把伞过来。");
+        TangHelp.setTouxiang("tang");
         helpItemList.add(TangHelp);
 
         HelpItem TangHelp1 = new HelpItem();
@@ -118,6 +124,7 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         TangHelp1.setHelp_item_time("2017年9月14日 上午11点00分");
         TangHelp1.setHelp_item_location("石油大学 北门外 麦趣尔蛋糕房");
         TangHelp1.setHelp_item_content("求帮取快递");
+        TangHelp1.setTouxiang("tang1");
         helpItemList.add(TangHelp1);
 
         HelpItem TangHelp2 = new HelpItem();
@@ -125,6 +132,7 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         TangHelp2.setHelp_item_time("2017年9月14日 上午10点24分");
         TangHelp2.setHelp_item_location("家佳源购物广场二楼");
         TangHelp2.setHelp_item_content("丢了咖啡色男士钱包，希望捡到的好心人联系我！");
+        TangHelp2.setTouxiang("tang2");
         helpItemList.add(TangHelp2);
 
         HelpItem TangHelp3 = new HelpItem();
@@ -132,6 +140,7 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         TangHelp3.setHelp_item_time("2017年9月14日 上午10点02分");
         TangHelp3.setHelp_item_location("公路上");
         TangHelp3.setHelp_item_content("车上的人中暑了，希望过往的司机师傅能给瓶水喝。");
+        TangHelp3.setTouxiang("tang3");
         helpItemList.add(TangHelp3);
 
         HelpItem TangHelp4 = new HelpItem();
@@ -139,6 +148,7 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         TangHelp4.setHelp_item_time("2017年9月14日 上午9点58分");
         TangHelp4.setHelp_item_location("11楼422宿舍");
         TangHelp4.setHelp_item_content("有需要打印文件的私聊我");
+        TangHelp4.setTouxiang("tang4");
         helpItemList.add(TangHelp4);
 
     }
@@ -226,7 +236,11 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
     }
 
     //ListView 中各子项的事件1：不是用户自己发送的
-    public void showInfo(final String helpusername,String helpcontent){
+    public void showInfo(final String helpusername,String helpcontent,final String helptouxiang){
+
+        imageID = helptouxiang;
+        helpname = helpusername;
+
         new AlertDialog.Builder(this)
                 .setTitle("求救详情")
                 .setMessage(helpusername+"   "+helpcontent)//可以加上性别
@@ -239,9 +253,10 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                         //此处应该打开一个服务，用来监听对方的回应
                         Intent intentserver = new Intent(HelpCommunity.this,
                                                   GiveHelpIntentService.class);
-                        startService(intentserver);
+                        intentserver.putExtra("touxiang",helptouxiang)
+;                        startService(intentserver);
                         //点击“给予帮助”后，会向服务器发送一条通知，该通知用来通知另一方
-                        //这里先不添加服务器，直接使用socket使两方通信
+
 
 
                     }

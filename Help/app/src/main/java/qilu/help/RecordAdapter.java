@@ -47,7 +47,7 @@ public class RecordAdapter extends ArrayAdapter<RecordItem> {
             //设置左边的头像是我的头像
             lefttouxiang.setImageURI(imageUri);
             //设置右边的头像是我帮助的人的头像
-            righttouxiang.setImageResource(R.drawable.tang);
+            righttouxiang.setImageResource(getImageResourceId(ChatRoom.chatHeTouxiang));
         }else{
             //设置左边的头像是帮助我的人的头像
             lefttouxiang.setImageResource(R.drawable.helpi);
@@ -55,5 +55,22 @@ public class RecordAdapter extends ArrayAdapter<RecordItem> {
             righttouxiang.setImageURI(imageUri);
         }
         return view;
+    }
+
+    //获取图片的真是地址
+    public int getImageResourceId(String name) {
+        R.drawable drawables=new R.drawable();
+        //默认的id
+        int resId=0x7f02000b;
+        try {
+            //根据字符串字段名，取字段//根据资源的ID的变量名获得Field的对象,使用反射机制来实现的
+            java.lang.reflect.Field field=R.drawable.class.getField(name);
+            //取值
+            resId=(Integer)field.get(drawables);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return resId;
     }
 }

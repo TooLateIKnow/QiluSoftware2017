@@ -10,6 +10,8 @@ public class HelpItem {
     private String help_item_location;
     private String help_item_content;
 
+    private String touxiang;
+
     private boolean ifMine = false;
 
     public void setHelp_item_username(String help_item_username){
@@ -36,6 +38,12 @@ public class HelpItem {
         this.ifMine = ifMine;
     }public boolean getIfMine(){
         return ifMine;
+    }
+
+    public void setTouxiang(String touxiang){
+        this.touxiang = touxiang;
+    }public String getTouxiang(){
+        return touxiang;
     }
 }
 

@@ -32,7 +32,7 @@ public class PutHelpIntentService extends IntentService {
             Date curDate = new Date(System.currentTimeMillis());//获取当前时间
             String currentDate = formatter.format(curDate);
             //在“消息大厅”中添加记录
-            MessageActivity.addRecord("余成","我在石油大学，可以帮你买黄焖鸡",currentDate,true,false);
+            MessageActivity.addRecord("余成","我在石油大学，我可以帮助你",currentDate,true,false,"helpi");
             //给手机发送一个通知
             Intent Notificationintent = new Intent(PutHelpIntentService.this,MessageActivity.class);
             PendingIntent pi = PendingIntent.getActivity(PutHelpIntentService.this,0,Notificationintent,0);
@@ -41,8 +41,8 @@ public class PutHelpIntentService extends IntentService {
                     .setContentTitle("提示")
                     .setContentText("余成:我在石油大学，可以帮你买黄焖鸡")
                     .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.helpi))
+                    .setSmallIcon(R.mipmap.logo_new)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.logo_new))
                     .setContentIntent(pi)
                     .setAutoCancel(true)
                     .setVibrate(new long[]{0,1000,1000,1000})

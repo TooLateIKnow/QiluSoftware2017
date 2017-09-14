@@ -2,12 +2,14 @@ package qilu.help;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,13 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     static private List<MessageItem> MessageItemList = new ArrayList<>();
     //定义适配器
     MessageAdapter adapter;
+
+    //获取点击图片的名字
+    static String ClickPictureName;
+
+    //传递邮箱
+    static int MessageimageID;
+    static boolean ifIHelpOther;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,24 +63,32 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         item_one.setMessage_item_name("孤独的茶");
         item_one.setMessage_item_content("你好，我在嘉年华电影院，我看看");
         item_one.setMessage_item_time("2017年9月10日12:34:43");
+        item_one.setMessage_item_touxiang("message");
+        item_one.setIfIhelpOther(true);
         MessageItemList.add(item_one);
 
         MessageItem item_two = new MessageItem();
         item_two.setMessage_item_name("苏打水");
         item_two.setMessage_item_content("同学你好，我也是石油大学的");
         item_two.setMessage_item_time("2017年9月11日14:30:40");
+        item_two.setMessage_item_touxiang("message1");
+        item_one.setIfIhelpOther(true);
         MessageItemList.add(item_two);
 
         MessageItem item_three = new MessageItem();
         item_three.setMessage_item_name("锦城江风");
         item_three.setMessage_item_content("你好咧。我想我可以帮你");
         item_three.setMessage_item_time("2017年9月12日15:20:13");
+        item_three.setMessage_item_touxiang("message2");
+        item_one.setIfIhelpOther(true);
         MessageItemList.add(item_three);
 
         MessageItem item_four = new MessageItem();
         item_four.setMessage_item_name("盒子先生");
         item_four.setMessage_item_content("大佬你好，能给我帮助吗？");
         item_four.setMessage_item_time("2017年9月13日17:24:13");
+        item_four.setMessage_item_touxiang("message3");
+        item_one.setIfIhelpOther(true);
         MessageItemList.add(item_four);
 
     }
@@ -87,10 +104,11 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onItemClick(AdapterView<?>parent,View view,int position,long id){
                 MessageItem messageItem = MessageItemList.get(position); //获得了那个子项
+
                 Intent intent = new Intent("qilu.help.ACTION_CHAT_START");
                 intent.putExtra("his Name",messageItem.getMessage_item_name());
-                intent.putExtra("his Touxiang",messageItem.getMessage_item_touxiang());
-                intent.putExtra("if i help Other or not",messageItem.getIfIhelpOther());
+                ifIHelpOther = messageItem.getIfIhelpOther();
+                ClickPictureName = messageItem.getMessage_item_touxiang();
                 messageItem.setIfFirstClick(false);
                 startActivity(intent);
                 finish();
@@ -99,11 +117,12 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //往“消息大厅中添加记录”
-    static public void addRecord(String name,String content,String time,boolean ifFirstOpen,boolean ifIhelpOther){
+    static public void addRecord(String name,String content,String time,boolean ifFirstOpen,boolean ifIhelpOther,String imageid){
         MessageItem message = new MessageItem();
         message.setMessage_item_name(name);
         message.setMessage_item_time(time);
         message.setMessage_item_content(content);
+        message.setMessage_item_touxiang(imageid);
         message.setIfFirstClick(ifFirstOpen);
         message.setIfIhelpOther(ifIhelpOther);
         MessageItemList.add(message);

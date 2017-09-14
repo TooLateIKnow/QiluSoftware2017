@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -44,23 +45,38 @@ public class ChatRoomMessageAdapter extends RecyclerView.Adapter<ChatRoomMessage
             leftMsg = (TextView)view.findViewById(R.id.ChatRoom_left_message_He_send);
             rightMsg = (TextView)view.findViewById(R.id.ChatRoom_right_message_I_send);
 
-            /*myName = (TextView)view.findViewById(R.id.ChatRoom_myName);
-            heName = (TextView)view.findViewById(R.id.ChatRoom_heName);
-            myName.setText("我:");
-            heName.setText(ChatRoom.chatHeusername+":");*/
 
             mytouxiang = (CircleImageView)view.findViewById(R.id.ChatRoom_myTouxiang);
-            mytouxiang.setImageURI(imageUri);
-            //mytouxiang.setImageResource(R.drawable.nav_icon);
             hetouxiang = (CircleImageView)view.findViewById(R.id.ChatRoom_heTouxiang);
-            if(ChatRoom.chatIfIhelpOther){
-                hetouxiang.setImageResource(R.drawable.ihelp);
+            //设置头像
+            mytouxiang.setImageURI(imageUri);
+            hetouxiang.setImageResource(getImageResourceId(ChatRoom.chatHeTouxiang));
+            /*if(ChatRoom.chatIfIhelpOther){
+                hetouxiang.setImageResource(getImageResourceId(ChatRoom.chatHeTouxiang));
+
             }else{
                 hetouxiang.setImageResource(R.drawable.helpi);
+            }*/
+        }
+        //获取图片的真是地址
+        public int getImageResourceId(String name) {
+            R.drawable drawables=new R.drawable();
+            //默认的id
+            int resId=0x7f02000b;
+            try {
+                //根据字符串字段名，取字段//根据资源的ID的变量名获得Field的对象,使用反射机制来实现的
+                java.lang.reflect.Field field=R.drawable.class.getField(name);
+                //取值
+                resId=(Integer)field.get(drawables);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
+            return resId;
         }
     }
 
+    //构造方法
     public ChatRoomMessageAdapter(List<ChatRoomMessage> msgList){
         mMsgList = msgList;
     }
@@ -74,6 +90,7 @@ public class ChatRoomMessageAdapter extends RecyclerView.Adapter<ChatRoomMessage
     @Override
     public void onBindViewHolder(ViewHolder holder,int position){
         ChatRoomMessage msg = mMsgList.get(position);
+
         if(msg.getType() == ChatRoomMessage.TYPE_RECEIVED){
             //表示收到消息，显示左边的布局
             holder.leftLayout.setVisibility(View.VISIBLE);

@@ -3,6 +3,7 @@ package qilu.help;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
     private TextView chatrooom_Dialog_date;
     private TextView chatrooom_Dialog_incident;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +52,9 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
         TextView chatroonusername = (TextView)findViewById(R.id.ChatRoom_username);
         Intent intent = getIntent();
         chatHeusername = intent.getStringExtra("his Name");//获得上面传递过来的数据
-        chatHeTouxiang = intent.getStringExtra("his Touxiang");
-        chatIfIhelpOther = intent.getBooleanExtra("if i help Other or not",false);
+        chatHeTouxiang = MessageActivity.ClickPictureName;
+        chatIfIhelpOther = MessageActivity.ifIHelpOther;
+
         chatroonusername.setText(chatHeusername);
 
         init();
@@ -77,6 +81,7 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
             case R.id.ChatRoom_back:
                 Intent intent = new Intent(ChatRoom.this,MessageActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.ChatRoom_sure:
                 //弹出对话框
