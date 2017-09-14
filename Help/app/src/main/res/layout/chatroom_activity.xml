@@ -52,28 +52,37 @@
         android:id="@+id/ChatRoom_recycle_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#DDDDDD">
 
         <EditText
+            android:background="#FFFFFF"
             android:id="@+id/ChatRoom_inputText"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="6dp"
             android:layout_weight="1"
-            android:background="#DDDDDD"
+            android:textColor="#000000"
+            android:textSize="23sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="13dp"
             android:hint="输入聊天内容"
             android:maxLines="5"/>
 
         <Button
             android:id="@+id/ChatRoom_send"
             android:layout_width="wrap_content"
+            android:background="@drawable/shape"
             android:layout_height="40dp"
-            android:background="#2DA8F6"
             android:textSize="23dp"
             android:text="发 送"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="3dp"
             android:textColor="#FFFFFF"/>
     </LinearLayout>
 
