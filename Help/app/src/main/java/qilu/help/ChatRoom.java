@@ -52,6 +52,7 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
         TextView chatroonusername = (TextView)findViewById(R.id.ChatRoom_username);
         Intent intent = getIntent();
         chatHeusername = intent.getStringExtra("his Name");//获得上面传递过来的数据
+        String ChatContent = intent.getStringExtra("his Content") ;
         chatHeTouxiang = MessageActivity.ClickPictureName;
         chatIfIhelpOther = MessageActivity.ifIHelpOther;
 
@@ -60,7 +61,7 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
         init();
 
         //首先初始化一些消息数据用于测试
-        initMsgs();
+        initMsgs(ChatContent);
         sendOrReciveMessage();
     }
     public void init(){
@@ -118,8 +119,8 @@ public class ChatRoom extends AppCompatActivity implements View.OnClickListener{
     }
 
     //初始化一些聊天信息的数据，用于测试
-    public void initMsgs(){
-        ChatRoomMessage msg1 = new ChatRoomMessage("你好",ChatRoomMessage.TYPE_RECEIVED);
+    public void initMsgs(String Chatcontent){
+        ChatRoomMessage msg1 = new ChatRoomMessage(Chatcontent,ChatRoomMessage.TYPE_RECEIVED);
         msgList.add(msg1);
     }
 

@@ -3,6 +3,7 @@ package qilu.help;
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,6 +14,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +23,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -30,12 +34,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,11 +55,18 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+
+import net.sf.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -58,6 +75,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -65,16 +83,19 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener {
+
     public static  boolean ifLogin = false;
     public static  boolean ifSign = false;
+    private boolean ifupdata = false;
 
     private boolean fabOpened = false;
     private MapView mapView;
-    public LocationClient mLocationClient;
+    public LocationClient mLocationClient; //
     private BaiduMap baiduMap;
-    private boolean isFirstLocate = true;
+    private boolean isFirstLocate = true; //判断是不是第一次定位
 
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO = 2;
@@ -94,6 +115,19 @@ public class MainActivity extends AppCompatActivity
     private StringBuilder currentPosition;  static public String sendingCurrentposition = null;
     private String sosText; //用来生成求助文本
 
+    private boolean ifLayerOpen = false;
+    private Button school;
+    private Button carmer;
+    private Button hospital;
+    private Button station;
+    private Button forest;
+    private Button market;
+    private TextView layerName;
+    private TextView layerContent;
+    private ImageView layerPicture;
+
+    private JSONObject updataJsonObject;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +146,7 @@ public class MainActivity extends AppCompatActivity
 
         //权限申请
         mLocationClient = new LocationClient(getApplicationContext());
-        mLocationClient.registerLocationListener(new MyLocationListener());
+        mLocationClient.registerLocationListener(new MyLocationListener());//注册了一个定位监听器
         List<String> permissionList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -175,14 +209,31 @@ public class MainActivity extends AppCompatActivity
         save();
         load();
         //readFromDatabase();//将数据库中的数据读出来
+
+        school = (Button)findViewById(R.id.School);
+        carmer = (Button)findViewById(R.id.Carmer);
+        hospital = (Button)findViewById(R.id.Hospital);
+        station = (Button)findViewById(R.id.Station);
+        forest = (Button)findViewById(R.id.Forest);
+        market = (Button)findViewById(R.id.Market);
+
+        school.setOnClickListener(this);
+        carmer.setOnClickListener(this);
+        hospital.setOnClickListener(this);
+        station.setOnClickListener(this);
+        forest.setOnClickListener(this);
+        market.setOnClickListener(this);
+
+        updataJsonObject = new JSONObject();//当修改数据的时候，通过JSON的方式修改
     }
 
     //实现实时定位
     private void requestLocation(){
-        LocationClientOption option = new LocationClientOption();
+        LocationClientOption option = new LocationClientOption();//这四句是实现实时定位
         option.setScanSpan(5000);
         option.setIsNeedAddress(true);
         mLocationClient.setLocOption(option);
+
         mLocationClient.start();
     }
 
@@ -211,7 +262,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     //显示地图和当前位置
-    public class MyLocationListener implements BDLocationListener {
+    public class MyLocationListener implements BDLocationListener {//定位监听器，需要先注册才能使用方法
         @Override
         public void onReceiveLocation(BDLocation location){
             //获得当前详细方位
@@ -261,11 +312,6 @@ public class MainActivity extends AppCompatActivity
         mLocationClient.stop();
         mapView.onDestroy();
         baiduMap.setMyLocationEnabled(false);
-        if(ifLogin){
-            Toast.makeText(this,"destior:1",Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(this,"destior:0",Toast.LENGTH_SHORT).show();
-        }
         save();
     }
     @Override
@@ -325,6 +371,19 @@ public class MainActivity extends AppCompatActivity
         }
         if(id==R.id.action_exitApp){
             finish();
+        }
+        if(id==R.id.action_open_close){
+            View view = getWindow().getDecorView();
+            if(!ifLayerOpen){
+                addLayer(view);
+            }else{
+                closeLayer(view);
+            }
+
+        }
+        if(id==R.id.action_guide){
+            View view = getWindow().getDecorView();
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -448,13 +507,14 @@ public class MainActivity extends AppCompatActivity
         }else if("file".equalsIgnoreCase(uri.getScheme())){
             imagePath= uri.getPath();
         }
-        displayImage(imagePath);
+        displayImage(imagePath,data);
         imageUri = uri;//这个imageuri是用来传递图片的
     }
     //4.4版本以前打开相册
     private void handleImageBeforeKitKat(Intent data){
         Uri uri = data.getData();
         String imagePath = getImagePath(uri,null);
+        displayImage(imagePath,data);
         imageUri = uri;//这个imageuri是用来传递图片的
     }
     //获取相册图片的真实路径
@@ -470,10 +530,11 @@ public class MainActivity extends AppCompatActivity
         return path;
     }
     //显示相册图片
-    private void displayImage(String imagePath){
+    private void displayImage(String imagePath,Intent data){
         if(imagePath!=null){
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            picture.setImageBitmap(bitmap);
+            //Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            Bitmap bm = compressBitmap(null, null, this,data.getData() , 4, false);
+            picture.setImageBitmap(bm);
         }else{
             Toast.makeText(this,"failed to get image",Toast.LENGTH_SHORT).show();
         }
@@ -510,7 +571,7 @@ public class MainActivity extends AppCompatActivity
     //弹出对话框
     private void inputTitleDialog(String title, String buttonName, final int ItemID) {
 
-        final EditText inputServer = new EditText(this);
+        final EditText inputServer = new EditText(this);//对话框中的一个输入框
         inputServer.setFocusable(true);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -522,22 +583,40 @@ public class MainActivity extends AppCompatActivity
                         switch(ItemID){
                             case R.id.nav_setTel:
                                 if (isMobile(inputServer.getText().toString())) {
-                                    tel.setText(inputServer.getText().toString());
+                                    updataJsonObject.put("mobilephone",inputServer.getText().toString());
+                                    connectToServer();
+                                    if(ifupdata){
+                                        tel.setText(inputServer.getText().toString());
+                                    }else{
+                                        Toast.makeText(MainActivity.this,"发生未知错误，修改失败！",Toast.LENGTH_SHORT).show();
+                                    }
                                 } else{
                                     Toast.makeText(MainActivity.this,"请输入正确的手机号码",Toast.LENGTH_SHORT).show();
                                 }
                                 break;
                             case R.id.nav_setMail:
                                 if (isEmail(inputServer.getText().toString())) {
-                                    mail.setText(inputServer.getText().toString());
+                                    updataJsonObject.put("usermail",inputServer.getText().toString());
+                                    connectToServer();
+                                    if(ifupdata){
+                                        mail.setText(inputServer.getText().toString());
+                                    }else{
+                                        Toast.makeText(MainActivity.this,"发生未知错误，修改失败！",Toast.LENGTH_SHORT).show();
+                                    }
                                 } else{
                                     Toast.makeText(MainActivity.this,"请输入正确的邮箱",Toast.LENGTH_SHORT).show();
                                 }
                                 break;
                             case R.id.nav_setPersonal:
                                 if(inputServer.getText().toString()!=null){
-                                    name.setText(inputServer.getText().toString());
                                     sendingname = name.getText().toString();
+                                    updataJsonObject.put("username",inputServer.getText().toString());
+                                    connectToServer();
+                                    if(ifupdata){
+                                        name.setText(inputServer.getText().toString());
+                                    }else{
+                                        Toast.makeText(MainActivity.this,"发生未知错误，修改失败！",Toast.LENGTH_SHORT).show();
+                                    }
                                 }else{
                                     Toast.makeText(MainActivity.this,"用户名无效",Toast.LENGTH_SHORT).show();
                                 }
@@ -545,21 +624,31 @@ public class MainActivity extends AppCompatActivity
                             default:
                                 break;
                         }
-
                     }
                 });
         builder.show();
     }
-    //插入数据库
-    public void updataDatabase(String item,String number,MyDatabaseHelper dbHelper){
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        if(item.equals("phone")||item.equals("password")){
-            values.put(item,Integer.getInteger(number));
-        }else{
-            values.put(item,number);
-        }
-        db.update("user",values,null,null);
+    //将修改的数据上传到服务器
+    public void connectToServer(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    String urlStr="http://192.168.43.193:50000/HelpServer/loginingservlet";//设置路径
+                    //下面是写入服务器中的数据
+                    String params = "updata=" + updataJsonObject.toString();
+                    String resultData=HttpUtil.HttpPostMethod(urlStr,params);
+                    if (resultData.equals("登录成功")) {//这里的服务器需要把注册信息发送给客户端
+                        System.out.println("++++++++++++++++++++++修改好像成功了");
+                        ifupdata = true;
+                    }else{
+                        ifupdata = false;
+                    }
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     //验证手机号
@@ -571,7 +660,7 @@ public class MainActivity extends AppCompatActivity
     总结起来就是第一位必定为1，第二位必定为3或5或8，其他位置的可以为0-9
     */
         //"[1]"代表第1位为数字1，"[358]"代表第二位可以为3、5、8中的一个，"\\d{9}"代表后面是可以是0～9的数字，有9位。
-        String num = "[1][358]\\d{9}";
+        String num = "[1][3578]\\d{9}";
         if (TextUtils.isEmpty(number)) {
             return false;
         } else {
@@ -613,7 +702,7 @@ public class MainActivity extends AppCompatActivity
                                 emailIntent.setType("text/plain");
                                 // 邮件文本内容
                                 emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, inputServer.getText().toString());
-                                startActivity(Intent.createChooser(emailIntent, "选择求助的地点"));
+                                startActivity(Intent.createChooser(emailIntent, "求助信息发送到"));
                             }
                         });
                 builder.show();
@@ -623,6 +712,42 @@ public class MainActivity extends AppCompatActivity
                 Intent Intent = new Intent(android.content.Intent.ACTION_SENDTO, smsToUri);
                 Intent.putExtra("sms_body", sosText);// 短信内容
                 startActivity(Intent);
+                break;
+            case R.id.School:
+                StringBuilder layerSchool = new StringBuilder();
+                layerSchool.append("类型：小学").append("\n")
+                            .append("面积：500亩").append("\n");
+                initPopup(view,"希望小学","school",layerSchool.toString());
+                break;
+            case R.id.Carmer:
+                StringBuilder layerCarmer = new StringBuilder();
+                layerCarmer.append("类型：电影院").append("\n")
+                        .append("面积：2亩").append("\n");
+                initPopup(view,"中山影城","carmer",layerCarmer.toString());
+                break;
+            case R.id.Hospital:
+                StringBuilder layerHospital = new StringBuilder();
+                layerHospital.append("类型：医院").append("\n")
+                        .append("面积：30亩").append("\n");
+                initPopup(view,"人民医院","hospital",layerHospital.toString());
+                break;
+            case R.id.Station:
+                StringBuilder layerStation = new StringBuilder();
+                layerStation.append("类型：车站").append("\n")
+                        .append("面积：50亩").append("\n");
+                initPopup(view,"火车站","station",layerStation.toString());
+                break;
+            case R.id.Forest:
+                StringBuilder layerForest = new StringBuilder();
+                layerForest.append("类型：森林").append("\n")
+                        .append("面积：4000亩").append("\n");
+                initPopup(view,"原始森林","forest",layerForest.toString());
+                break;
+            case R.id.Market:
+                StringBuilder layerMarket = new StringBuilder();
+                layerMarket.append("类型：超市").append("\n")
+                        .append("面积：10亩").append("\n");
+                initPopup(view,"连锁超市","market",layerMarket.toString());
                 break;
             default:
                 break;
@@ -679,6 +804,53 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**图片压缩处理，size参数为压缩比，比如size为2，则压缩为1/4**/
+    static public Bitmap compressBitmap(String path, byte[] data, Context context, Uri uri, int size, boolean width) {
+        BitmapFactory.Options options = null;
+        if (size > 0) {
+            BitmapFactory.Options info = new BitmapFactory.Options();
+             /**如果设置true的时候，decode时候Bitmap返回的为数据将空*/
+            info.inJustDecodeBounds = false;
+            decodeBitmap(path, data, context, uri, info);
+            int dim = info.outWidth;
+            if (!width) dim = Math.max(dim, info.outHeight);
+            options = new BitmapFactory.Options();
+            /**把图片宽高读取放在Options里*/
+            options.inSampleSize = size;
+        }
+        Bitmap bm = null;
+        try {
+            bm = decodeBitmap(path, data, context, uri, options);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
+    }
+    /**把byte数据解析成图片*/
+    static public Bitmap decodeBitmap(String path, byte[] data, Context context, Uri uri, BitmapFactory.Options options) {
+        Bitmap result = null;
+        if (path != null) {
+            result = BitmapFactory.decodeFile(path, options);
+        }
+        else if (data != null) {
+            result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        }
+        else if (uri != null) {
+            ContentResolver cr = context.getContentResolver();
+            InputStream inputStream = null;
+            try {
+                inputStream = cr.openInputStream(uri);
+                result = BitmapFactory.decodeStream(inputStream, null, options);
+                inputStream.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
     //为了测试写的方法
     static public void readFromDatabase(MyDatabaseHelper dbHelper){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -694,9 +866,70 @@ public class MainActivity extends AppCompatActivity
     }
     //为了测试写的方法
     static public void ceshifangfa(){
-        name.setText("木土土的");
+        name.setText("tangqiuyi");
         tel.setText("tel: "+"17854212445");
         mail.setText("mail: "+"258312@163.com");
 
+    }
+
+    //添加覆盖物
+    public void addLayer(View view){
+        school.setVisibility(view.VISIBLE);
+        carmer.setVisibility(view.VISIBLE);
+        hospital.setVisibility(view.VISIBLE);
+        station.setVisibility(view.VISIBLE);
+        forest.setVisibility(view.VISIBLE);
+        market.setVisibility(view.VISIBLE);
+        ifLayerOpen = true;
+    }
+    //去除覆盖物
+    public void closeLayer(View view){
+        school.setVisibility(view.GONE);
+        carmer.setVisibility(view.GONE);
+        hospital.setVisibility(view.GONE);
+        station.setVisibility(view.GONE);
+        forest.setVisibility(view.GONE);
+        market.setVisibility(view.GONE);
+        ifLayerOpen = false;
+    }
+    public void initPopup(View v,String name,String type,String content){
+        View view= LayoutInflater.from(MainActivity.this).inflate(R.layout.popupwindow_layer_layout, null, false);
+        layerName = (TextView) view.findViewById(R.id.layer_name);
+        layerContent = (TextView) view.findViewById(R.id.layer_content);
+        layerPicture = (ImageView) view.findViewById(R.id.layer_picture);
+        layerName.setText(name);
+        layerContent.setText(content);
+        if(type.equals("school")){
+            layerPicture.setImageResource(R.drawable.xiwang);
+        }else if(type.equals("carmer")){
+            layerPicture.setImageResource(R.drawable.zhongshan);
+        }else if(type.equals("hospital")){
+            layerPicture.setImageResource(R.drawable.renminyiyuan);
+        }else if(type.equals("station")){
+            layerPicture.setImageResource(R.drawable.chezhan);
+        }else if(type.equals("forest")){
+            layerPicture.setImageResource(R.drawable.senlin);
+        }else if(type.equals("market")){
+            layerPicture.setImageResource(R.drawable.chaoshi);
+        }
+        //1.构造一个PopupWindow，参数依次是加载的View，宽高
+        final PopupWindow popWindow = new PopupWindow(view,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popWindow.setAnimationStyle(R.anim.anim_pop);  //设置加载动画
+        //这些为了点击非PopupWindow区域，PopupWindow会消失的，如果没有下面的
+        //代码的话，你会发现，当你把PopupWindow显示出来了，无论你按多少次后退键
+        //PopupWindow并不会关闭，而且退不出程序，加上下述代码可以解决这个问题
+        popWindow.setTouchable(true);
+        popWindow.setTouchInterceptor(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+                // 这里如果返回true的话，touch事件将被拦截
+                // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+            }
+        });
+        popWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));    //要为popWindow设置一个背景才有效
+        //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
+        popWindow.showAsDropDown(v, 100, 0);
     }
 }

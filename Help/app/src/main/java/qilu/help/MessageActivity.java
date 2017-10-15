@@ -1,5 +1,6 @@
 package qilu.help;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -34,6 +35,9 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     static int MessageimageID;
     static boolean ifIHelpOther;
 
+    //
+    static public Context MessageContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +58,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         Message_To_Message.setOnClickListener(this);
         Message_To_Community.setOnClickListener(this);
         Message_To_Record.setOnClickListener(this);
+
+        MessageContext = getApplicationContext();
     }
 
     //为了演示需要。提前准备好一些数据
@@ -107,6 +113,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
                 Intent intent = new Intent("qilu.help.ACTION_CHAT_START");
                 intent.putExtra("his Name",messageItem.getMessage_item_name());
+                intent.putExtra("his Content",messageItem.getMessage_item_content());
                 ifIHelpOther = messageItem.getIfIhelpOther();
                 ClickPictureName = messageItem.getMessage_item_touxiang();
                 messageItem.setIfFirstClick(false);

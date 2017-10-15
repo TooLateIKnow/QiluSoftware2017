@@ -19,4 +19,22 @@
         android:icon="@drawable/loginin"
         android:title="退出程序"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_open_close"
+        android:orderInCategory="100"
+        android:icon="@drawable/loginin"
+        android:title="打开/关闭图层"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_guide"
+        android:orderInCategory="100"
+        android:icon="@drawable/loginin"
+        android:title="步行导航"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_guidecar"
+        android:orderInCategory="100"
+        android:icon="@drawable/loginin"
+        android:title="车载导航"
+        app:showAsAction="never"/>
 </menu>

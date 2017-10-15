@@ -61,6 +61,9 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
     static public String  imageID;
     static public String helpname;
 
+    //
+    static public Context context;
+
     static private List<HelpItem> helpItemList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +110,8 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         Community_puthelp = (Button)findViewById(R.id.Community_puthelp);
         Community_back.setOnClickListener(this);
         Community_puthelp.setOnClickListener(this);
+
+        context = getApplicationContext();
     }
 
     //为了演示需要。提前准备好一些数据

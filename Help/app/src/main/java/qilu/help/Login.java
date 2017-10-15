@@ -29,6 +29,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -37,80 +40,6 @@ import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static qilu.help.MainActivity.ceshifangfa;
-
-/*public class Login extends AppCompatActivity implements View.OnClickListener{
-
-    private EditText Login_username;
-    private EditText Login_password;
-    private Button Login_login;
-    private Button Login_sign;
-
-    private String username;
-    private String password;
-    private boolean ifOk = false;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        init();
-    }
-
-    public void init(){
-        Login_username = (EditText)findViewById(R.id.Login_username);
-        Login_password = (EditText)findViewById(R.id.Login_password);
-        Login_login = (Button)findViewById(R.id.Login_login);
-        Login_sign = (Button)findViewById(R.id.Login_sign);
-
-        Login_login.setOnClickListener(this);
-        Login_sign.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View v){
-        switch(v.getId()){
-            case R.id.Login_login:
-                username = Login_username.getText().toString().trim();
-                password = Login_password.getText().toString().trim();
-                //调用方法
-                JudgeIegal(username,password);
-                if(ifOk) {
-                    //上传数据
-                    connectToServer();//传入服务器
-                }
-                break;
-            case R.id.Login_sign:
-                break;
-        }
-    }
-
-    //判断输入是否合法
-    public void JudgeIegal(String username,String password){
-        ifOk = true;
-    }
-
-    //传入服务器
-    public void connectToServer(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    String urlStr="http://172.24.237.151:50000/HelpServer/loginingservlet";//设置路径
-                    //下面是写入服务器中的数据
-                    String params="username=" + username
-                            + "&password=" + password;
-                    String resultData=HttpUtil.HttpPostMethod(urlStr,params);
-                    if(resultData.equals("登录成功")) {
-                        System.out.println(resultData);
-                    }
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-}*/
-
 
 public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
@@ -121,11 +50,16 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
     };
     private UserLoginTask mAuthTask = null;
 
-    // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    boolean cancel = false;//标志输入是否合法
+
+    private String email;//存储用来登录的手机号和密码
+    private String password;
+    private JSONObject loginJsonObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +75,8 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                    email = mEmailView.getText().toString();//获得邮箱
+                    password = mPasswordView.getText().toString();//获得密码
                     attemptLogin();
                     return true;
                 }
@@ -153,7 +89,13 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                email = mEmailView.getText().toString();//获得邮箱
+                password = mPasswordView.getText().toString();//获得密码
                 attemptLogin();
+                if(!cancel){
+                    //上传数据到服务器
+                    connectToServer(email,password,view);
+                }
             }
         });
         //点击注册Sign_in按钮
@@ -172,6 +114,8 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         Intent intent = getIntent();
         String data = intent.getStringExtra("phone");
         mEmailView.setText(data);
+
+        loginJsonObject = new JSONObject();//JSON类型的数据
     }
 
     private void populateAutoComplete() {
@@ -222,11 +166,6 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
-
-        String email = mEmailView.getText().toString();//获得邮箱
-        String password = mPasswordView.getText().toString();//获得密码
-
-        boolean cancel = false;
         View focusView = null;
 
         // 检查密码
@@ -247,13 +186,6 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             cancel = true;
         }
 
-        //现在只有17854212445,922922才可以登录
-        /*if(mEmailView.equals("17854212445")&&mPasswordView.equals("922922")){
-        }else{
-            mPasswordView.setError("密码错误！");
-            cancel = true;
-        }*/
-
         if (cancel) {//如果检查不合格
             focusView.requestFocus();
         } else {//如果检查合格
@@ -261,31 +193,33 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
 
-            //上传数据到服务器
-            connectToServer(email,password);
+            //使用JSON类型保存数据
+            try{
+                loginJsonObject.put("mobilephone",email);
+                loginJsonObject.put("password",password);
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
         }
     }
     //上传数据到服务器
-    public void connectToServer(final String username,final String password){
+    public void connectToServer(final String mobilephone,final String password,final View view){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    //为了测试直接登录,这个本来应该写在广播中
-                    Intent intentLogin = new Intent("HAS.LOGINED.IN.SUCCEED");
-                    sendBroadcast(intentLogin);
-
-                    String urlStr="http://172.24.237.151:50000/HelpServer/loginingservlet";//设置路径
+                    String urlStr="http://192.168.43.193:50000/HelpServer/loginingservlet";//设置路径
                     //下面是写入服务器中的数据
-                    String params="username=" + username
-                            + "&password=" + password;
-                    System.out.println("conent--->"+"username="+username+"&password="+password);
+                    String params = "login=" + loginJsonObject.toString();
                     String resultData=HttpUtil.HttpPostMethod(urlStr,params);
-                    if (resultData.equals("登录成功")) {
-                        /*
+                    if (resultData.equals("登录成功")) {//这里的服务器需要把注册信息发送给客户端
                         //接收登录的广播
                         Intent intentLogin = new Intent("HAS.LOGINED.IN.SUCCEED");
-                        sendBroadcast(intentLogin);*/
+                        sendBroadcast(intentLogin);
+                        //登录之后，需要启动一个服务，该服务每隔一段时间向服务器发送一次当前的
+                    }else{
+                        Snackbar.make(view,"注册失败，请修改用户名重新注册！",Snackbar.LENGTH_SHORT)
+                                .show();
                     }
                 }catch(IOException e){
                     e.printStackTrace();
@@ -430,12 +364,15 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
-
             if (success) {
-                finish();
+                if(MainActivity.ifLogin){
+                    showProgress(true);//表示进度条的界面会消失
+                    finish();
+                }else{
+                    showProgress(false);//表示进度条的界面不会消失
+                }
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.setError("密码错误！");
                 mPasswordView.requestFocus();
             }
         }

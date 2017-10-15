@@ -11,6 +11,17 @@ public class User {
     private String usersex;//定义性别
     private String password;//定义密码
 
+    public User(){
+
+    }
+    public User(String username,String password,String usermail,String usersex,String mobilephone){
+        this.username = username;
+        this.password = password;
+        this.usermail = usermail;
+        this.usersex = usersex;
+        this.mobilephone = mobilephone;
+    }
+
     public void setUsername(String username){//username的get和set方法
         this.username = username;
     }

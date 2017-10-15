@@ -25,34 +25,42 @@ public class HttpUtil {
     //自定义的POST工具
     public static String HttpPostMethod(String url,String params)
             throws IOException{
+
         PrintWriter out = null;
         BufferedReader in = null;
+        //StringBuilder result = null;
         String result = "";
-        System.out.println("进入到HttpUtil中了");
         try{
             URL realUrl = new URL(url);//设置连接
             HttpURLConnection conn = (HttpURLConnection)realUrl.openConnection();
 
+            System.out.println("========================1");
+
             conn.setRequestMethod("POST");//设置方法
-
-            conn.setUseCaches(false);//设置连接不缓存
-            conn.setInstanceFollowRedirects(true);//一些通用的设置
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestProperty("Charset","UTF-8");
-
             conn.setDoOutput(true);//如果是Post方法，这两个必须设置
             conn.setDoInput(true);
+
+            System.out.println("========================2");
+
+            //conn.setUseCaches(false);//设置连接不缓存
+            conn.setInstanceFollowRedirects(true);//一些通用的设置
+            conn.setRequestProperty("Charset","UTF-8");
+
+            System.out.println("========================3");
 
             out = new PrintWriter(conn.getOutputStream());//将数据写入流中
             out.print(params);
             out.flush();//发送流
 
+            System.out.println("========================4");
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));//读取服务器返回的信息
             String line = null;
             while((line=in.readLine())!=null){
                 result += line; //用result来存储从服务器返回的数据
+                //result.append(line);
+                System.out.println("========================5");
             }
-
+            System.out.println("========================6");
             out.close();//关闭流和连接
             conn.disconnect();
 
@@ -60,7 +68,8 @@ public class HttpUtil {
             System.out.println("连接POST失败");
             e.printStackTrace();
         }
-        return result;
+        return result.toString();
+
     }
 
 }

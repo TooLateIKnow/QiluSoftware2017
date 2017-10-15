@@ -61,4 +61,69 @@
         android:layout_alignParentEnd="true" />
 
 
+    <Button
+        android:id="@+id/School"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+        android:background="@drawable/school"
+        android:layout_above="@+id/Carmer"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp" />
+
+    <Button
+        android:id="@+id/Carmer"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+        android:background="@drawable/carmer"
+        android:layout_below="@+id/Forest"
+        android:layout_toRightOf="@+id/School"
+        android:layout_toEndOf="@+id/School"
+        android:layout_marginTop="13dp" />
+
+    <Button
+        android:id="@+id/Hospital"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+        android:background="@drawable/hospital1"
+        android:layout_alignBottom="@+id/Forest"
+        android:layout_alignLeft="@+id/OpenShortMessage"
+        android:layout_alignStart="@+id/OpenShortMessage"
+        android:layout_marginBottom="18dp" />
+
+    <Button
+        android:id="@+id/Station"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+        android:background="@drawable/station"
+        android:layout_above="@+id/School"
+        android:layout_alignLeft="@+id/OpenPhone"
+        android:layout_alignStart="@+id/OpenPhone" />
+
+    <Button
+        android:id="@+id/Forest"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+        android:background="@drawable/forest1"
+        android:layout_above="@+id/Market"
+        android:layout_alignLeft="@+id/Market"
+        android:layout_alignStart="@+id/Market"
+        android:layout_marginBottom="27dp" />
+
+    <Button
+        android:id="@+id/Market"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+        android:background="@drawable/market1"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/OpenShare"
+        android:layout_alignStart="@+id/OpenShare" />
+
 </RelativeLayout>

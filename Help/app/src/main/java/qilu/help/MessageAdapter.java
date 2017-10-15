@@ -1,6 +1,7 @@
 package qilu.help;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static qilu.help.MainActivity.imageUri;
 
 /**
  * Created by Y481 on 2017/9/11.

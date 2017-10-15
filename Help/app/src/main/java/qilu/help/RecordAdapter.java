@@ -47,10 +47,10 @@ public class RecordAdapter extends ArrayAdapter<RecordItem> {
             //设置左边的头像是我的头像
             lefttouxiang.setImageURI(imageUri);
             //设置右边的头像是我帮助的人的头像
-            righttouxiang.setImageResource(getImageResourceId(ChatRoom.chatHeTouxiang));
+            righttouxiang.setImageResource(getImageResourceId(recordItem.getRecord_right_touxiang()));
         }else{
             //设置左边的头像是帮助我的人的头像
-            lefttouxiang.setImageResource(R.drawable.helpi);
+            lefttouxiang.setImageResource(getImageResourceId(recordItem.getRecord_left_touxiang()));
             //设置右边的头像是我的头像
             righttouxiang.setImageURI(imageUri);
         }

@@ -1,9 +1,12 @@
 package qilu.help;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -13,11 +16,17 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.URLEncoder;
 
-//import net.sf.json.JSONObject;
+/*import net.sf.json.JSONObject;
+import net.sf.json.JSONException;*/
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -46,8 +55,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private boolean ifOk = false;//判断输入是否合法
     private String resultData = null;//存储服务器返回值
-
-    private boolean ifExist = false;//判断用户名是否存在
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,72 +99,46 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         });
+
+        jsonObject = new JSONObject();
     }
 
     @Override
     public void onClick(View v){
         switch(v.getId()){
             case R.id.Sign_sure_button:
-                username = Sign_name_editText.getText().toString().trim();
+                username = Sign_name_editText.getText().toString().trim();//六个注册信息
                 mobilephone = Sign_phone_editText.getText().toString();
                 usermail = Sign_mail_editText.getText().toString().trim();
                 //usersex 已经赋值完毕了
                 password = Sign_password_textView.getText().toString();
                 repassword= Sign_Repassword_textView.getText().toString().trim();
+
+                try {
+                    jsonObject.put("username", username);
+                    jsonObject.put("mobilephone", mobilephone);
+                    jsonObject.put("usermail", usermail);
+                    jsonObject.put("usersex",usersex);
+                    jsonObject.put("password", password);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 //调用方法，判断输入是否合法，合法就是ifOK。
                 JudgeIegal(username,mobilephone,usermail,password,repassword,usersex);
                 if(ifOk) {
                     //上传数据
-                    DataToBeanUser();//传入Bean
+                    DataToBeanUser();//传入Bean,是为了用json格式传递
                     connectToServer();//传入服务器
-                }
-
-
-                //为了测试，不管是不是注册成功，都显示成功.
-                //照理说应该是根据服务器返回的消息进行判断的
-                MainActivity.ifSign = true;
-                //然后将这些注册信息放入表中
-                try{
-                    MyDatabaseHelper dbHelper;
-                    dbHelper = new MyDatabaseHelper(this,"USERS.db",null,2);//创建数据库;
-                    dbHelper.getWritableDatabase();
-                    //向数据库中添加数据
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-                    ContentValues values = new ContentValues();
-                    values.put("phone",Integer.getInteger(mobilephone));
-                    values.put("name",username);
-                    values.put("mail",usermail);
-                    values.put("sex",usersex);
-                    values.put("password",Integer.getInteger(password));
-                    db.insert("user",null,values);
-
-                    MainActivity.readFromDatabase(dbHelper);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                /////////////////////////////////////////
-
-                try {
-                    Thread.currentThread().sleep(1000);//阻断1秒
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                if(MainActivity.ifSign){
-                    Toast.makeText(SignInActivity.this,"注册成功！快去登录吧!!",Toast.LENGTH_SHORT).show();
-                    try {
-                        Thread.currentThread().sleep(2000);//阻断2秒
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if(MainActivity.ifSign){
+                        /*Intent intent_sure = new Intent(SignInActivity.this,Login.class);
+                        startActivity(intent_sure);*/
+                        finish();
+                    }else{
+                        Snackbar.make(v,"注册失败，请修改用户名重新注册！",Snackbar.LENGTH_SHORT)
+                                .show();
                     }
-                    Intent intent = new Intent(SignInActivity.this,Login.class);
-                    intent.putExtra("phone","17854212445");
-                    startActivity(intent);
                 }
-                if(ifExist){
-                    Toast.makeText(SignInActivity.this,"用户名已经存在！",Toast.LENGTH_SHORT).show();
-                }
-
                 break;
             case R.id.Sign_cancel_button:
                 Intent intent_cancel = new Intent(SignInActivity.this,Login.class);
@@ -220,23 +201,28 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void run() {
                 try{
-                    String urlStr="http://172.24.237.151:50000/HelpServer/loginservlet";//设置路径
-                    //下面是写入服务器中的数据
-                    String params="username=" + username
-                               + "&mobilephone=" + mobilephone
-                               + "&usermail=" + usermail
-                               + "&usersex=" + usersex
-                               + "&password=" + password;
+                    String urlStr="http://192.168.43.193:50000/HelpServer/loginservlet";//设置路径
+                    //String urlStr="http://192.168.43.49:8080/RegisterServlet";//设置路径
+                    //下面是写入服务器中的数据，使用的是JSONObject的格式
+                    String params = "username="+"tang";
+                    //String params = "user="+jsonObject.toString();
                     resultData=HttpUtil.HttpPostMethod(urlStr,params);
                     if(resultData.equals("注册成功")){
                         MainActivity.ifSign = true;
-                        ifExist = false;
-                    }else if(resultData.equals("用户名已经存在")) {
-                        ifExist = true;
+                    }else{
+                        MainActivity.ifSign = false;
                     }
                 }catch(IOException e){
                     e.printStackTrace();
                 }
+                /*try{
+                    Socket socket = new Socket("192.168.43.49",8081);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    String line = br.readLine();
+                    System.out.println("来自服务器的数据："+line);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }*/
             }
         }).start();
     }

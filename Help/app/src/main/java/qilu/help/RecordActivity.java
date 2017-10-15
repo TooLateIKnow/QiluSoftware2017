@@ -48,12 +48,12 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
             record.setRecord_left_name("我");
             record.setRecord_right_name(chatHeusername);
             //record.setRecord_left_touxiang();//我的头像
-            //record.setRecord_right_touxiang(chatHeTouxiang);
+            record.setRecord_right_touxiang(chatHeTouxiang);
         }else{
             //如果是别人帮助了我
             record.setRecord_left_name(chatHeusername);
             record.setRecord_right_name("我");
-            //record.setRecord_left_touxiang(chatHeTouxiang);
+            record.setRecord_left_touxiang(chatHeTouxiang);
             //record.setRecord_right_touxiang();//我的头像
         }
         record.setRecord_item_ifIhelpOther(chatIfIhelpOther);

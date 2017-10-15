@@ -3,6 +3,7 @@ package qilu.help;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.LabeledIntent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +62,9 @@ public class HelpCommunityAdapter extends ArrayAdapter<HelpItem> {
         }else if(helpItem.getHelp_item_username().equals("印团")){
             touxiang.setImageResource(R.drawable.tang4);
         }else{
-            touxiang.setImageURI(imageUri);
+            Bitmap bm = MainActivity.compressBitmap(null, null, HelpCommunity.context,imageUri, 4, false);
+            touxiang.setImageBitmap(bm);
+            //touxiang.setImageURI(imageUri);
         }
 
         ImageView help_item_tongzhi = (ImageView)view.findViewById(R.id.help_item_tongzhi);
