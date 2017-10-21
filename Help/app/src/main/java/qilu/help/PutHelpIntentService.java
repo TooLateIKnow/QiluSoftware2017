@@ -32,7 +32,7 @@ public class PutHelpIntentService extends IntentService {
             Date curDate = new Date(System.currentTimeMillis());//获取当前时间
             String currentDate = formatter.format(curDate);
             //在“消息大厅”中添加记录
-            MessageActivity.addRecord("路人甲","我在石油大学，我可以帮助你",currentDate,true,false,"helpi");
+            //MessageActivity.addRecord("路人甲","我在石油大学，我可以帮助你",currentDate,true,false,"helpi");
             //给手机发送一个通知
             Intent Notificationintent = new Intent(PutHelpIntentService.this,MessageActivity.class);
             PendingIntent pi = PendingIntent.getActivity(PutHelpIntentService.this,0,Notificationintent,0);

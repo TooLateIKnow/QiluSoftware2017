@@ -5,16 +5,20 @@ package qilu.help;
  */
 
 public class RecordItem {
-    private String Record_left_name;
-    private String Record_right_name;
-    private String Record_left_touxiang;
-    private String Record_right_touxiang;
+    private String Record_left_name;      //左边的用户名
+    private String Record_item_AFHuserId; //施救ID(左边)
+    private String Record_left_touxiang;  //左边的头像
 
-    private String Record_item_date;
-    private String Record_item_location;
-    private String Record_item_incident;
+    private String Record_right_name;     //右边的用户名
+    private String Record_right_touxiang; //右边的头像
+    private String Record_item_PHuserId;  //被救ID(右边)
 
-    private boolean Record_item_ifIhelpOther;
+    private String Record_item_date;      //记录的时间
+    private String Record_item_location;  //记录的地点
+    private String Record_item_incident;  //记录的事件
+
+    private Boolean Record_item_ifIhelpOther;  //标记是否帮助了对方
+
 
     public void setRecord_item_date(String Record_item_date){
         this.Record_item_date = Record_item_date;
@@ -53,4 +57,14 @@ public class RecordItem {
     public void setRecord_item_ifIhelpOther(boolean Record_item_ifIhelpOther){
         this.Record_item_ifIhelpOther = Record_item_ifIhelpOther;
     }public boolean getRecord_item_ifIhelpOther(){return Record_item_ifIhelpOther;}
+
+    public void setRecord_item_AFHuserId(String Record_item_AFHuserId){
+        this.Record_item_AFHuserId = Record_item_AFHuserId;
+    }public String getRecord_item_AFHuserId(){return Record_item_AFHuserId;}
+
+    public void setRecord_item_PHuserId(String Record_item_PHuserId){
+        this.Record_item_PHuserId = Record_item_PHuserId;
+    }public String getRecord_item_PHuserId(){
+        return Record_item_PHuserId;
+    }
 }

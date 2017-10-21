@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="qilu.help">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -16,15 +17,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
+        android:name="org.litepal.LitePalApplication"
         android:allowBackup="true"
         android:icon="@mipmap/logo_new"
         android:label="帮我"
         android:roundIcon="@mipmap/logo_new"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon, android:theme ,android:label"> <!-- 消除各种包属性上的以来问题 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="qilu.help.fileprovider"
@@ -53,17 +55,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- 这是主活动 -->
+
         <activity
             android:name=".Login"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- 登录活动 -->
+
 
         <!-- 一个服务，当程序进入后台也可以用 -->
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" />
+            android:process=":remote" /> <!-- 百度定位服务 -->
+
 
         <!-- 一个广播。通知程序登录还是退出 -->
         <receiver
@@ -74,15 +79,18 @@
                 <action android:name="HAS.LOGINED.IN.SUCCEED" />
             </intent-filter>
         </receiver>
+        登 <!-- 录成功激活的广播 -->
 
         <activity
             android:name=".SignInActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- 注册活动 -->
+
         <activity
             android:name=".HelpCommunity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- 求助大厅 -->
+
         <activity
             android:name=".ChatRoom"
             android:launchMode="singleTask"
@@ -92,22 +100,28 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity>
+        </activity> <!-- 聊天室活动 -->
+
         <activity
             android:name=".RecordActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- 记录活动 -->
+
         <activity
             android:name=".MessageActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- 消息活动 -->
 
         <service
             android:name=".GiveHelpIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".PutHelpIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service
+            android:name=".socketService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

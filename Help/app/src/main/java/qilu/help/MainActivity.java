@@ -19,12 +19,16 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
@@ -68,6 +72,9 @@ import com.baidu.mapapi.model.LatLng;
 
 import net.sf.json.JSONObject;
 
+import org.litepal.LitePal;
+import org.litepal.crud.DataSupport;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -80,6 +87,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+/*import java.util.logging.Handler;*/
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -89,7 +97,9 @@ public class MainActivity extends AppCompatActivity
 
     public static  boolean ifLogin = false;
     public static  boolean ifSign = false;
-    private boolean ifupdata = false;
+    private static boolean ifupdata = false;
+
+    private static final int UPDATE_TEXT = 1;
 
     private boolean fabOpened = false;
     private MapView mapView;
@@ -101,9 +111,9 @@ public class MainActivity extends AppCompatActivity
     public static final int CHOOSE_PHOTO = 2;
     private CircleImageView picture;
 
-    static public Uri imageUri;//存放拍照后的图片地址00
+    static public Uri imageUri;//存放拍照后的图片地址，用来传递
 
-    static private TextView name;    static public String sendingname = null;//用来传递用户名
+    static private TextView name;
     static private TextView tel;
     static private TextView mail;
 
@@ -115,18 +125,24 @@ public class MainActivity extends AppCompatActivity
     private StringBuilder currentPosition;  static public String sendingCurrentposition = null;
     private String sosText; //用来生成求助文本
 
-    private boolean ifLayerOpen = false;
-    private Button school;
-    private Button carmer;
-    private Button hospital;
-    private Button station;
-    private Button forest;
-    private Button market;
-    private TextView layerName;
-    private TextView layerContent;
-    private ImageView layerPicture;
-
     private JSONObject updataJsonObject;
+
+    //异步消息处理机制，方便在子线程中更改UI
+    private Handler handler = new Handler(){
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case UPDATE_TEXT:
+                    String updataContent = (String)msg.obj;
+                    int ItemID = msg.arg1;
+                    updata_name_phone_mail(updataContent,ItemID,ifupdata);
+                    DataBaseTools.upData(ItemID,updataContent);//修改数据库中的数据
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +208,6 @@ public class MainActivity extends AppCompatActivity
         View headView = navigationView.inflateHeaderView(R.layout.nav_header_main);
         picture = (CircleImageView) headView.findViewById(R.id.head_CircleImageView);
         name = (TextView) headView.findViewById(R.id.name);
-        sendingname = name.getText().toString();//用来将用户的用户名传递
         tel = (TextView) headView.findViewById(R.id.tel);
         mail = (TextView) headView.findViewById(R.id.mail);
         navigationView.setNavigationItemSelectedListener(this);
@@ -205,26 +220,52 @@ public class MainActivity extends AppCompatActivity
         OpenShortMessage = (Button)findViewById(R.id.OpenShortMessage);
         OpenShortMessage.setOnClickListener(this);
 
-        //读取文件
+        //读取文件,记录是否登录
         save();
         load();
         //readFromDatabase();//将数据库中的数据读出来
 
-        school = (Button)findViewById(R.id.School);
-        carmer = (Button)findViewById(R.id.Carmer);
-        hospital = (Button)findViewById(R.id.Hospital);
-        station = (Button)findViewById(R.id.Station);
-        forest = (Button)findViewById(R.id.Forest);
-        market = (Button)findViewById(R.id.Market);
+        //创建表格User
+        DataBaseTools.createTable();
+        show_Name_Mail_Phone();
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mapView.onResume();
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mapView.onPause();
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        mLocationClient.stop();
+        mapView.onDestroy();
+        baiduMap.setMyLocationEnabled(false);
+        DataBaseTools.deleteData();
+        save();
+    }
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+        show_Name_Mail_Phone();//将数据库中的相关数据搜索出来
+    }
 
-        school.setOnClickListener(this);
-        carmer.setOnClickListener(this);
-        hospital.setOnClickListener(this);
-        station.setOnClickListener(this);
-        forest.setOnClickListener(this);
-        market.setOnClickListener(this);
+    //显示 用户名 邮箱 手机号码
+    public void show_Name_Mail_Phone(){
+        if(DataBaseTools.queryData("tel")==null){
+            tel.setText("tel:");
+        }else{ tel.setText("手机:"+DataBaseTools.queryData("tel")); }
+        if(DataBaseTools.queryData("mail")==null){
+            mail.setText("mail:");
+        }else{ mail.setText("邮箱:"+DataBaseTools.queryData("mail")); }
+        if(DataBaseTools.queryData("name")==null){
+            name.setText("用户名:");
+        }else{ name.setText(DataBaseTools.queryData("name")); }
 
-        updataJsonObject = new JSONObject();//当修改数据的时候，通过JSON的方式修改
     }
 
     //实现实时定位
@@ -233,7 +274,6 @@ public class MainActivity extends AppCompatActivity
         option.setScanSpan(5000);
         option.setIsNeedAddress(true);
         mLocationClient.setLocOption(option);
-
         mLocationClient.start();
     }
 
@@ -296,29 +336,6 @@ public class MainActivity extends AppCompatActivity
         sosText = currentPosition.toString()+"事件是：  ";
     }
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-        mapView.onResume();
-    }
-    @Override
-    protected void onPause(){
-        super.onPause();
-        mapView.onPause();
-    }
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        mLocationClient.stop();
-        mapView.onDestroy();
-        baiduMap.setMyLocationEnabled(false);
-        save();
-    }
-    @Override
-    protected void onRestart(){
-        super.onRestart();
-        //readFromDatabase();
-    }
 
     @Override//点击背景
     public void onBackPressed() {
@@ -368,24 +385,14 @@ public class MainActivity extends AppCompatActivity
         }
         if(id==R.id.action_exit){
             ifLogin = false;
+            DataBaseTools.deleteData();//一旦退出登录，数据库中的内容就删除了
+            tel.setText("手机:");
+            name.setText("用户名:");
+            mail.setText("邮箱:");
         }
         if(id==R.id.action_exitApp){
             finish();
         }
-        if(id==R.id.action_open_close){
-            View view = getWindow().getDecorView();
-            if(!ifLayerOpen){
-                addLayer(view);
-            }else{
-                closeLayer(view);
-            }
-
-        }
-        if(id==R.id.action_guide){
-            View view = getWindow().getDecorView();
-
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -462,7 +469,7 @@ public class MainActivity extends AppCompatActivity
                         try{
                             Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().
                                     openInputStream(imageUri));
-                            picture.setImageBitmap(bitmap);
+                            picture.setImageBitmap(bitmap);//显示头像
                         }catch(FileNotFoundException e){
                             e.printStackTrace();
                         }
@@ -545,12 +552,18 @@ public class MainActivity extends AppCompatActivity
         ObjectAnimator animator = ObjectAnimator.ofFloat(view,"rotation",0,-155,-135);
         animator.setDuration(500);
         animator.start();
-        OpenPhone.setVisibility(view.VISIBLE);
-        OpenShare.setVisibility(View.VISIBLE);
-        OpenShortMessage.setVisibility(View.VISIBLE);
         AlphaAnimation alphaAnimation = new AlphaAnimation(0,0.7f);
         alphaAnimation.setDuration(500);
         alphaAnimation.setFillAfter(true);
+        new Thread(){//设置时间延迟
+            public void run(){
+                try{ sleep(500);
+                }catch(InterruptedException e){ e.printStackTrace();}
+            }
+        }.start();
+        OpenPhone.setVisibility(view.VISIBLE);
+        OpenShare.setVisibility(View.VISIBLE);
+        OpenShortMessage.setVisibility(View.VISIBLE);
         fabOpened = true;
     }
     //关闭悬浮按钮
@@ -558,67 +571,56 @@ public class MainActivity extends AppCompatActivity
         ObjectAnimator animator = ObjectAnimator.ofFloat(view,"rotation",-135,20,0);
         animator.setDuration(500);
         animator.start();
-
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.7f,0);
+        alphaAnimation.setDuration(500);
+        new Thread(){//设置时间延迟
+            public void run(){
+                try{ sleep(1000);
+                }catch(InterruptedException e){ e.printStackTrace();}
+            }
+        }.start();
         OpenPhone.setVisibility(view.GONE);
         OpenShare.setVisibility(View.GONE);
         OpenShortMessage.setVisibility(View.GONE);
-
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0.7f,0);
-        alphaAnimation.setDuration(500);
         fabOpened = false;
     }
 
     //弹出对话框
     private void inputTitleDialog(String title, String buttonName, final int ItemID) {
-
         final EditText inputServer = new EditText(this);//对话框中的一个输入框
         inputServer.setFocusable(true);
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title).setView(inputServer);
         builder.setPositiveButton(buttonName,
                 new DialogInterface.OnClickListener() {
-
                     public void onClick(DialogInterface dialog, int which) {
                         switch(ItemID){
                             case R.id.nav_setTel:
+                                updataJsonObject = new JSONObject();//当修改数据的时候，通过JSON的方式修改
                                 if (isMobile(inputServer.getText().toString())) {
                                     updataJsonObject.put("mobilephone",inputServer.getText().toString());
-                                    connectToServer();
-                                    if(ifupdata){
-                                        tel.setText(inputServer.getText().toString());
-                                    }else{
-                                        Toast.makeText(MainActivity.this,"发生未知错误，修改失败！",Toast.LENGTH_SHORT).show();
-                                    }
+                                    updataJsonObject.put("userId",DataBaseTools.queryData("userId"));
+                                    connectToServer(inputServer.getText().toString(),ItemID);
                                 } else{
                                     Toast.makeText(MainActivity.this,"请输入正确的手机号码",Toast.LENGTH_SHORT).show();
                                 }
                                 break;
                             case R.id.nav_setMail:
+                                updataJsonObject = new JSONObject();//当修改数据的时候，通过JSON的方式修改
                                 if (isEmail(inputServer.getText().toString())) {
                                     updataJsonObject.put("usermail",inputServer.getText().toString());
-                                    connectToServer();
-                                    if(ifupdata){
-                                        mail.setText(inputServer.getText().toString());
-                                    }else{
-                                        Toast.makeText(MainActivity.this,"发生未知错误，修改失败！",Toast.LENGTH_SHORT).show();
-                                    }
+                                    updataJsonObject.put("userId",DataBaseTools.queryData("userId"));
+                                    connectToServer(inputServer.getText().toString(),ItemID);
                                 } else{
                                     Toast.makeText(MainActivity.this,"请输入正确的邮箱",Toast.LENGTH_SHORT).show();
                                 }
                                 break;
                             case R.id.nav_setPersonal:
+                                updataJsonObject = new JSONObject();//当修改数据的时候，通过JSON的方式修改
                                 if(inputServer.getText().toString()!=null){
-                                    sendingname = name.getText().toString();
                                     updataJsonObject.put("username",inputServer.getText().toString());
-                                    connectToServer();
-                                    if(ifupdata){
-                                        name.setText(inputServer.getText().toString());
-                                    }else{
-                                        Toast.makeText(MainActivity.this,"发生未知错误，修改失败！",Toast.LENGTH_SHORT).show();
-                                    }
-                                }else{
-                                    Toast.makeText(MainActivity.this,"用户名无效",Toast.LENGTH_SHORT).show();
+                                    updataJsonObject.put("userId",DataBaseTools.queryData("userId"));
+                                    connectToServer(inputServer.getText().toString(),ItemID);
                                 }
                                 break;
                             default:
@@ -629,26 +631,47 @@ public class MainActivity extends AppCompatActivity
         builder.show();
     }
     //将修改的数据上传到服务器
-    public void connectToServer(){
+    public void connectToServer(final String updataContent,final int ItemID){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    String urlStr="http://192.168.43.193:50000/HelpServer/loginingservlet";//设置路径
+                    //String urlStr="http://192.168.43.193:50000/HelpServer/loginingservlet";//设置路径
+                    String urlStr="http://192.168.43.49:8080/ChangeInfoServlet";//设置路径
                     //下面是写入服务器中的数据
-                    String params = "updata=" + updataJsonObject.toString();
+                    String params = "user=" + updataJsonObject.toString();
                     String resultData=HttpUtil.HttpPostMethod(urlStr,params);
-                    if (resultData.equals("登录成功")) {//这里的服务器需要把注册信息发送给客户端
-                        System.out.println("++++++++++++++++++++++修改好像成功了");
+                    if (resultData.equals("修改成功")) {//这里的服务器需要把注册信息发送给客户端
                         ifupdata = true;
+                        Message message = new Message();
+                        message.what = UPDATE_TEXT;
+                        message.arg1 = ItemID;
+                        message.obj = updataContent;
+                        handler.sendMessage(message);//子线程中修改UI
                     }else{
+                        /*Snackbar.make(view,"登录失败！",Snackbar.LENGTH_SHORT)
+                                .show();*/
                         ifupdata = false;
                     }
-                }catch(IOException e){
+                }catch(IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+    }
+    //修改信息
+    public void updata_name_phone_mail(String updataContent,int ItemID,boolean ifupdata){
+        if(ifupdata){
+            if(ItemID==R.id.nav_setTel){
+                tel.setText("手机:"+updataContent);
+            }else if(ItemID==R.id.nav_setMail){
+                mail.setText("邮箱:"+updataContent);
+            }else if(ItemID==R.id.nav_setPersonal){
+                name.setText(updataContent);
+            }
+        }else{
+            Toast.makeText(MainActivity.this,"发生未知错误，修改失败！",Toast.LENGTH_SHORT).show();
+        }
     }
 
     //验证手机号
@@ -712,42 +735,6 @@ public class MainActivity extends AppCompatActivity
                 Intent Intent = new Intent(android.content.Intent.ACTION_SENDTO, smsToUri);
                 Intent.putExtra("sms_body", sosText);// 短信内容
                 startActivity(Intent);
-                break;
-            case R.id.School:
-                StringBuilder layerSchool = new StringBuilder();
-                layerSchool.append("类型：小学").append("\n")
-                            .append("面积：500亩").append("\n");
-                initPopup(view,"希望小学","school",layerSchool.toString());
-                break;
-            case R.id.Carmer:
-                StringBuilder layerCarmer = new StringBuilder();
-                layerCarmer.append("类型：电影院").append("\n")
-                        .append("面积：2亩").append("\n");
-                initPopup(view,"中山影城","carmer",layerCarmer.toString());
-                break;
-            case R.id.Hospital:
-                StringBuilder layerHospital = new StringBuilder();
-                layerHospital.append("类型：医院").append("\n")
-                        .append("面积：30亩").append("\n");
-                initPopup(view,"人民医院","hospital",layerHospital.toString());
-                break;
-            case R.id.Station:
-                StringBuilder layerStation = new StringBuilder();
-                layerStation.append("类型：车站").append("\n")
-                        .append("面积：50亩").append("\n");
-                initPopup(view,"火车站","station",layerStation.toString());
-                break;
-            case R.id.Forest:
-                StringBuilder layerForest = new StringBuilder();
-                layerForest.append("类型：森林").append("\n")
-                        .append("面积：4000亩").append("\n");
-                initPopup(view,"原始森林","forest",layerForest.toString());
-                break;
-            case R.id.Market:
-                StringBuilder layerMarket = new StringBuilder();
-                layerMarket.append("类型：超市").append("\n")
-                        .append("面积：10亩").append("\n");
-                initPopup(view,"连锁超市","market",layerMarket.toString());
                 break;
             default:
                 break;
@@ -849,87 +836,5 @@ public class MainActivity extends AppCompatActivity
             }
         }
         return result;
-    }
-
-    //为了测试写的方法
-    static public void readFromDatabase(MyDatabaseHelper dbHelper){
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.query("user",null,null,null,null,null,null);
-        if(cursor.moveToFirst()){
-            do{
-                name.setText(cursor.getString(cursor.getColumnIndex("name")));
-            }while(cursor.moveToNext());
-        }
-        cursor.close();
-        tel.setText("17854212445");
-        mail.setText("258132@163.com");
-    }
-    //为了测试写的方法
-    static public void ceshifangfa(){
-        name.setText("tangqiuyi");
-        tel.setText("tel: "+"17854212445");
-        mail.setText("mail: "+"258312@163.com");
-
-    }
-
-    //添加覆盖物
-    public void addLayer(View view){
-        school.setVisibility(view.VISIBLE);
-        carmer.setVisibility(view.VISIBLE);
-        hospital.setVisibility(view.VISIBLE);
-        station.setVisibility(view.VISIBLE);
-        forest.setVisibility(view.VISIBLE);
-        market.setVisibility(view.VISIBLE);
-        ifLayerOpen = true;
-    }
-    //去除覆盖物
-    public void closeLayer(View view){
-        school.setVisibility(view.GONE);
-        carmer.setVisibility(view.GONE);
-        hospital.setVisibility(view.GONE);
-        station.setVisibility(view.GONE);
-        forest.setVisibility(view.GONE);
-        market.setVisibility(view.GONE);
-        ifLayerOpen = false;
-    }
-    public void initPopup(View v,String name,String type,String content){
-        View view= LayoutInflater.from(MainActivity.this).inflate(R.layout.popupwindow_layer_layout, null, false);
-        layerName = (TextView) view.findViewById(R.id.layer_name);
-        layerContent = (TextView) view.findViewById(R.id.layer_content);
-        layerPicture = (ImageView) view.findViewById(R.id.layer_picture);
-        layerName.setText(name);
-        layerContent.setText(content);
-        if(type.equals("school")){
-            layerPicture.setImageResource(R.drawable.xiwang);
-        }else if(type.equals("carmer")){
-            layerPicture.setImageResource(R.drawable.zhongshan);
-        }else if(type.equals("hospital")){
-            layerPicture.setImageResource(R.drawable.renminyiyuan);
-        }else if(type.equals("station")){
-            layerPicture.setImageResource(R.drawable.chezhan);
-        }else if(type.equals("forest")){
-            layerPicture.setImageResource(R.drawable.senlin);
-        }else if(type.equals("market")){
-            layerPicture.setImageResource(R.drawable.chaoshi);
-        }
-        //1.构造一个PopupWindow，参数依次是加载的View，宽高
-        final PopupWindow popWindow = new PopupWindow(view,
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        popWindow.setAnimationStyle(R.anim.anim_pop);  //设置加载动画
-        //这些为了点击非PopupWindow区域，PopupWindow会消失的，如果没有下面的
-        //代码的话，你会发现，当你把PopupWindow显示出来了，无论你按多少次后退键
-        //PopupWindow并不会关闭，而且退不出程序，加上下述代码可以解决这个问题
-        popWindow.setTouchable(true);
-        popWindow.setTouchInterceptor(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-                // 这里如果返回true的话，touch事件将被拦截
-                // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
-            }
-        });
-        popWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));    //要为popWindow设置一个背景才有效
-        //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
-        popWindow.showAsDropDown(v, 100, 0);
     }
 }

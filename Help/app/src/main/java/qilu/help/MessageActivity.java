@@ -29,13 +29,10 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     MessageAdapter adapter;
 
     //获取点击图片的名字
-    static String ClickPictureName;
+    static String ClickPictureName;//都是用来传递到下一级的
 
-    //传递邮箱
-    static int MessageimageID;
     static boolean ifIHelpOther;
 
-    //
     static public Context MessageContext;
 
     @Override
@@ -44,7 +41,6 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.message_activity);
 
         init();
-        //initMessageItem();//这个方法是将提前准备好的数据添加近list中，现在把他添加在广播中
         addListToAdapter();
     }
 
@@ -62,42 +58,6 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         MessageContext = getApplicationContext();
     }
 
-    //为了演示需要。提前准备好一些数据
-    static public void initMessageItem(){
-
-        MessageItem item_one = new MessageItem();
-        item_one.setMessage_item_name("孤独的茶");
-        item_one.setMessage_item_content("你好，我在嘉年华电影院，我看看");
-        item_one.setMessage_item_time("2017年9月10日12:34:43");
-        item_one.setMessage_item_touxiang("message");
-        item_one.setIfIhelpOther(true);
-        MessageItemList.add(item_one);
-
-        MessageItem item_two = new MessageItem();
-        item_two.setMessage_item_name("苏打水");
-        item_two.setMessage_item_content("同学你好，我也是石油大学的");
-        item_two.setMessage_item_time("2017年9月11日14:30:40");
-        item_two.setMessage_item_touxiang("message1");
-        item_one.setIfIhelpOther(true);
-        MessageItemList.add(item_two);
-
-        MessageItem item_three = new MessageItem();
-        item_three.setMessage_item_name("锦城江风");
-        item_three.setMessage_item_content("你好咧。我想我可以帮你");
-        item_three.setMessage_item_time("2017年9月12日15:20:13");
-        item_three.setMessage_item_touxiang("message2");
-        item_one.setIfIhelpOther(true);
-        MessageItemList.add(item_three);
-
-        MessageItem item_four = new MessageItem();
-        item_four.setMessage_item_name("盒子先生");
-        item_four.setMessage_item_content("大佬你好，能给我帮助吗？");
-        item_four.setMessage_item_time("2017年9月13日17:24:13");
-        item_four.setMessage_item_touxiang("message3");
-        item_one.setIfIhelpOther(true);
-        MessageItemList.add(item_four);
-
-    }
     //将list映射到适配器中，然后将适配器添加给ListView
     public void addListToAdapter(){
         //将ListView中的数据初始化适配器
@@ -105,17 +65,20 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         //adapter
         ListView listView = (ListView)findViewById(R.id.Message_list);
         listView.setAdapter(adapter);
-        //ListView中各子项的事件
+        //ListView中各子项的事件,点击的时候跳转到聊天界面
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?>parent,View view,int position,long id){
                 MessageItem messageItem = MessageItemList.get(position); //获得了那个子项
 
+                //跳转的时候，将下一个界面需要的数据都传递过去
                 Intent intent = new Intent("qilu.help.ACTION_CHAT_START");
                 intent.putExtra("his Name",messageItem.getMessage_item_name());
                 intent.putExtra("his Content",messageItem.getMessage_item_content());
+                intent.putExtra("his UserId",messageItem.getMessage_item_heId());
                 ifIHelpOther = messageItem.getIfIhelpOther();
                 ClickPictureName = messageItem.getMessage_item_touxiang();
+
                 messageItem.setIfFirstClick(false);
                 startActivity(intent);
                 finish();
@@ -123,15 +86,20 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    //往“消息大厅中添加记录”
-    static public void addRecord(String name,String content,String time,boolean ifFirstOpen,boolean ifIhelpOther,String imageid){
+    //往“消息大厅中添加记录”,这应该是服务器向我发送的信息
+    static public void addRecord(String name,String content,
+                                 String time,String heId,String imageid){
         MessageItem message = new MessageItem();
         message.setMessage_item_name(name);
         message.setMessage_item_time(time);
         message.setMessage_item_content(content);
         message.setMessage_item_touxiang(imageid);
-        message.setIfFirstClick(ifFirstOpen);
-        message.setIfIhelpOther(ifIhelpOther);
+        if(heId==DataBaseTools.queryData("userId")){
+            message.setIfIhelpOther(false);
+        }else{
+            message.setIfIhelpOther(true);
+        }
+        message.setMessage_item_heId(heId);
         MessageItemList.add(message);
     }
 

@@ -1,15 +1,18 @@
 package qilu.help;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by Y481 on 2017/9/7.
  */
 
-public class User {
+public class User extends DataSupport {
     private String username;//定义用户名
     private String mobilephone;//定义手机
     private String usermail;//定义邮箱
     private String usersex;//定义性别
     private String password;//定义密码
+    private String userId;//用户的ID
 
     public User(){
 
@@ -56,4 +59,7 @@ public class User {
     public String getPassword(){
         return password;
     }
+
+    public void setUserId(String userId){ this.userId = userId;}
+    public String getUserId(){ return userId; }
 }

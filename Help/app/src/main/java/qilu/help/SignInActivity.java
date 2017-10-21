@@ -129,15 +129,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 if(ifOk) {
                     //上传数据
                     DataToBeanUser();//传入Bean,是为了用json格式传递
-                    connectToServer();//传入服务器
-                    if(MainActivity.ifSign){
-                        /*Intent intent_sure = new Intent(SignInActivity.this,Login.class);
-                        startActivity(intent_sure);*/
-                        finish();
-                    }else{
-                        Snackbar.make(v,"注册失败，请修改用户名重新注册！",Snackbar.LENGTH_SHORT)
-                                .show();
-                    }
+                    connectToServer(v);//传入服务器
                 }
                 break;
             case R.id.Sign_cancel_button:
@@ -195,22 +187,25 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         user.setPassword(password);
     }
     //注册信息上传
-    public void connectToServer(){
+    public void connectToServer(final View v){
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    String urlStr="http://192.168.43.193:50000/HelpServer/loginservlet";//设置路径
-                    //String urlStr="http://192.168.43.49:8080/RegisterServlet";//设置路径
+                    //String urlStr="http://192.168.43.193:50000/HelpServer/loginservlet";//设置路径
+                    String urlStr="http://192.168.43.49:8080/RegisterServlet";//设置路径
                     //下面是写入服务器中的数据，使用的是JSONObject的格式
-                    String params = "username="+"tang";
-                    //String params = "user="+jsonObject.toString();
+                    //String params = "username="+"tang";
+                    String params = "user="+jsonObject.toString();
                     resultData=HttpUtil.HttpPostMethod(urlStr,params);
                     if(resultData.equals("注册成功")){
                         MainActivity.ifSign = true;
-                    }else{
+                        finish();//表示注册成功
+                    }else{//表示注册失败
                         MainActivity.ifSign = false;
+                        Snackbar.make(v,resultData,Snackbar.LENGTH_SHORT)
+                                .show();
                     }
                 }catch(IOException e){
                     e.printStackTrace();

@@ -6,26 +6,31 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import net.sf.json.JSON;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -34,6 +39,8 @@ import java.util.Date;
 import java.util.List;
 
 public class HelpCommunity extends AppCompatActivity implements View.OnClickListener{
+    private static final int GET_DATA = 1;
+
     private Button Community_back;
     private Button Community_puthelp;
 
@@ -43,8 +50,8 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
     private TextView put_help_Dialog_date;
     private TextView put_help_Dialog_incident;
 
-    //定义适配器
-    HelpCommunityAdapter adapter;
+    //定义进度条
+    private ProgressDialog progressDialog;
 
     //获得PopupWindow中的控件
     private Button PopupWindow_update;
@@ -55,25 +62,119 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
     private FloatingActionButton Community_To_Community;
     private FloatingActionButton Community_To_Record;
 
-    String helpDate = null;//用于存储当前时间
+    static String helpDate;//用于存储当前时间
 
-    //传输头像
+    //传输头像(到时候在考虑)
     static public String  imageID;
     static public String helpname;
+    static public String heId;
 
-    //
+    ////
     static public Context context;
 
-    static private List<HelpItem> helpItemList = new ArrayList<>();
+    //JSON数据
+    private JSONObject jsonObject;
+
+    //定义适配器
+    HelpCommunityAdapter adapter;
+    private List<HelpItem> helpItemList = new ArrayList<>();//定义列表
+
+    //异步消息处理机制，方便在子线程中更改UI
+    private Handler handler = new Handler(){
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case GET_DATA:
+                    String resultData = (String)msg.obj;
+                    dismissProgressDialog();//对话框消失
+                    initHelpItem(resultData);//解析JSON并且添加进入list中
+                    addListToAdapter();
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.community_activity);
+        //读取当前系统时间
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        helpDate = formatter.format(curDate);
+        //net.sf.json.JSONObject jsonData = net.sf.json.JSONObject.fromObject(curDate);
         init();
-        //initHelpItem();//这个方法是将提前转备好的数据添加近list中,现在把它移入广播中。记得到时候拿出来
         addListToAdapter();
+        showProgressDialog();
+        connectToServer(helpDate);//连接服务器
+    }
+    @Override
+    protected void onStart(){
+        super.onStart();
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        helpItemList.clear();
+    }
+    @Override
+    protected void onRestart(){
+        super.onRestart();
     }
 
+    public void showProgressDialog(){//显示进度条对话框
+        progressDialog.setTitle("正在获取内容！");
+        progressDialog.setMessage("请稍后...");
+        progressDialog.setCancelable(true);
+        progressDialog.show();
+    }
+    public void dismissProgressDialog(){//对话框消失
+        progressDialog.dismiss();
+    }
+
+    //连接服务器
+    public void connectToServer(final String data){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    //String urlStr="http://192.168.43.193:50000/HelpServer/loginingservlet";//设置路径
+                    String urlStr="http://192.168.43.49:8080/RequestHallServlet";
+                    if(!data.equals(helpDate)){//设置路径
+                        urlStr="http://192.168.43.49:8080/PublishServlet";
+                    }
+                    //下面是写入服务器中的数据
+                    String params = "help=" + data;
+                    String resultData=HttpUtil.HttpPostMethod(urlStr,params);
+                    System.out.println(resultData);
+                    if (resultData!=null) {
+                        System.out.println(resultData);
+                        Message message = new Message();//异步机制
+                        message.what = GET_DATA;
+                        message.obj = resultData;//将服务器返回的json字符串传递出去
+                        handler.sendMessage(message);//子线程中修改UI
+                    }else{
+                    }
+                }catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
     //将list映射到适配器中，然后将适配器添加给ListView
     public void addListToAdapter(){
         //将ListView中的数据初始化适配器
@@ -90,7 +191,7 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                     initPopup(view,position,helpItem);
                 }else{
                     showInfo(helpItem.getHelp_item_username(),helpItem.getHelp_item_content(),
-                            helpItem.getTouxiang());
+                            helpItem.getTouxiang(),helpItem.getReqId(),helpItem.getUserId());
                 }
 
             }
@@ -112,53 +213,40 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         Community_puthelp.setOnClickListener(this);
 
         context = getApplicationContext();
+
+        progressDialog = new ProgressDialog(HelpCommunity.this);
+
     }
 
-    //为了演示需要。提前准备好一些数据
-    static public void initHelpItem(){
-        HelpItem TangHelp = new HelpItem();
-        TangHelp.setHelp_item_username("木土土的");
-        TangHelp.setHelp_item_time("2017年9月14日 上午11点14分");
-        TangHelp.setHelp_item_location("石油大学 南教北门口");
-        TangHelp.setHelp_item_content("下大雨没有带伞，希望能有小伙伴送一把伞过来。");
-        TangHelp.setTouxiang("tang");
-        helpItemList.add(TangHelp);
+    public void initHelpItem(String resultData){
+        try{
+            JSONArray jsonArray = new JSONArray(resultData);
+            for(int i = 0;i<jsonArray.length();i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                HelpItem TangHelp = new HelpItem();
+                TangHelp.setUserId(jsonObject.getString("userId"));//发布求助信息的userId
+                TangHelp.setHelp_item_username(jsonObject.getString("username"));//发布求助信息的名字
+                TangHelp.setHelp_item_location(jsonObject.getString("location"));//求助信息中的地点
+                TangHelp.setHelp_item_content(jsonObject.getString("reqInfo"));//求助信息中的事件
+                TangHelp.setTouxiang(jsonObject.getString("picnum"));//发布求助信息的图片
+                TangHelp.setHelp_item_time(jsonObject.getString("time"));//求助信息中的时间
+                TangHelp.setReqId(jsonObject.getString("reqId"));//标记该求助信息的id
 
-        HelpItem TangHelp1 = new HelpItem();
-        TangHelp1.setHelp_item_username("蓦然飞跃");
-        TangHelp1.setHelp_item_time("2017年9月14日 上午11点00分");
-        TangHelp1.setHelp_item_location("石油大学 北门外 麦趣尔蛋糕房");
-        TangHelp1.setHelp_item_content("求帮取快递");
-        TangHelp1.setTouxiang("tang1");
-        helpItemList.add(TangHelp1);
-
-        HelpItem TangHelp2 = new HelpItem();
-        TangHelp2.setHelp_item_username("荡荡");
-        TangHelp2.setHelp_item_time("2017年9月14日 上午10点24分");
-        TangHelp2.setHelp_item_location("家佳源购物广场二楼");
-        TangHelp2.setHelp_item_content("丢了咖啡色男士钱包，希望捡到的好心人联系我！");
-        TangHelp2.setTouxiang("tang2");
-        helpItemList.add(TangHelp2);
-
-        HelpItem TangHelp3 = new HelpItem();
-        TangHelp3.setHelp_item_username("高富帅");
-        TangHelp3.setHelp_item_time("2017年9月14日 上午10点02分");
-        TangHelp3.setHelp_item_location("公路上");
-        TangHelp3.setHelp_item_content("车上的人中暑了，希望过往的司机师傅能给瓶水喝。");
-        TangHelp3.setTouxiang("tang3");
-        helpItemList.add(TangHelp3);
-
-        HelpItem TangHelp4 = new HelpItem();
-        TangHelp4.setHelp_item_username("印团");
-        TangHelp4.setHelp_item_time("2017年9月14日 上午9点58分");
-        TangHelp4.setHelp_item_location("11楼422宿舍");
-        TangHelp4.setHelp_item_content("有需要打印文件的私聊我");
-        TangHelp4.setTouxiang("tang4");
-        helpItemList.add(TangHelp4);
-
+                //判断是否是当前用户自己发送的
+                if(TangHelp.getUserId().equals(DataBaseTools.queryData("userId"))){//表示是自己发送的
+                    TangHelp.setIfMine(true);
+                }else{
+                    TangHelp.setIfMine(false);
+                }
+                helpItemList.add(TangHelp);
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
     }
 
     //这个方法完成的功能是，用户点击“发送请求”的时候，能往helpItemList中添加子项
+    //其实这个方法设置的不好
     public void addToHelpItem(String name,String location,String date,String incident,boolean ifmine){
         //为了测试。先把时间地点和时间放在一个字符串中
         HelpItem helpItem_new = new HelpItem();
@@ -166,6 +254,8 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
         helpItem_new.setHelp_item_time(date);
         helpItem_new.setHelp_item_location(location);
         helpItem_new.setHelp_item_content(incident);
+        helpItem_new.setTouxiang("i");
+        helpItem_new.setUserId(DataBaseTools.queryData("userId"));
         helpItem_new.setIfMine(ifmine);
         helpItemList.add(0,helpItem_new);//每次都让数据添加在第一行
     }
@@ -188,10 +278,6 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 break;
             case R.id.Community_puthelp:
-                //读取当前系统时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
-                Date curDate = new Date(System.currentTimeMillis());//获取当前时间
-                helpDate = formatter.format(curDate);
 
                 //弹出对话框
                 final TableLayout putHelpDialog = (TableLayout) getLayoutInflater().inflate(R.layout.put_help_dialog, null);
@@ -201,9 +287,9 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                 put_help_Dialog_date = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_date);
                 put_help_Dialog_incident = (TextView) putHelpDialog.findViewById(R.id.put_help_Dialog_incident);
 
-                put_help_Dialog_username.setText(MainActivity.sendingname);
-                put_help_Dialog_location.setText(MainActivity.sendingCurrentposition);
-                put_help_Dialog_date.setText(helpDate);
+                put_help_Dialog_username.setText(DataBaseTools.queryData("name"));//用户名
+                put_help_Dialog_location.setText(MainActivity.sendingCurrentposition);//事件
+                put_help_Dialog_date.setText(helpDate);//时间
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(this);
                 //.setIcon()
@@ -219,14 +305,21 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                                         , put_help_Dialog_date.getText().toString()
                                         , put_help_Dialog_incident.getText().toString()
                                         , true);
-                                //弹出一个进度条对话框
-                                //ProgressDialog.show(HelpCommunity.this,"任务执行中","正在添加，请稍后...",false,true);
+                                try{
+                                    jsonObject = new JSONObject();
+                                    jsonObject.put("username", put_help_Dialog_username.getText().toString());
+                                    jsonObject.put("location", put_help_Dialog_location.getText().toString());
+                                    jsonObject.put("time",put_help_Dialog_date.getText().toString());
+                                    jsonObject.put("reqInfo",put_help_Dialog_incident.getText().toString());
+                                    jsonObject.put("picnum","i");
+                                    jsonObject.put("userId",DataBaseTools.queryData("userId"));
+                                }catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+                                //上传到服务器
+                                connectToServer(jsonObject.toString());
                                 //这里需要刷新页面
                                 addListToAdapter();
-                                //发布求助信息后会打开一个服务
-                                Intent intentserver = new Intent(HelpCommunity.this,
-                                        PutHelpIntentService.class);
-                                startService(intentserver);
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -241,8 +334,8 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
     }
 
     //ListView 中各子项的事件1：不是用户自己发送的
-    public void showInfo(final String helpusername,String helpcontent,final String helptouxiang){
-
+    public void showInfo(final String helpusername,String helpcontent,final String helptouxiang
+                        ,final String helpreqId,final String userId){
         imageID = helptouxiang;
         helpname = helpusername;
 
@@ -252,18 +345,32 @@ public class HelpCommunity extends AppCompatActivity implements View.OnClickList
                 .setPositiveButton("给予帮助", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //点击“给予帮助”后，会向服务器发送一条通知，该通知用来通知另一方
+                        connectToServer("helpreqId");
                         //点击“给予帮助”,将会向服务器发送请求，但是不会跳转到聊天界面。
                         //聊天界面通过点击消息中的list跳转。
                         Toast.makeText(HelpCommunity.this,"已向对方发送消息！正在等待对方回应",Toast.LENGTH_SHORT).show();
+                        //需要把userId：标志点击的那条记录是谁发送的
+                        heId = userId;
                         //此处应该打开一个服务，用来监听对方的回应
                         Intent intentserver = new Intent(HelpCommunity.this,
                                                   GiveHelpIntentService.class);
-                        intentserver.putExtra("touxiang",helptouxiang)
-;                        startService(intentserver);
-                        //点击“给予帮助”后，会向服务器发送一条通知，该通知用来通知另一方
-
-
-
+                        intentserver.putExtra("touxiang",helptouxiang);
+                        startService(intentserver);
+                        //向服务器发送数据
+                        try{
+                            JSONObject jsonMsg = new JSONObject();
+                            jsonMsg.put("Msg","我可以帮助你");
+                            jsonMsg.put("userAFHId",DataBaseTools.queryData("userId"));
+                            jsonMsg.put("userPHId",userId);
+                            jsonMsg.put("picnumAFH","我的头像");
+                            jsonMsg.put("picnumPH",helptouxiang);
+                            jsonMsg.put("unmAFH",DataBaseTools.queryData("name"));
+                            jsonMsg.put("unmPH",helpusername);
+                            socketService.send(jsonMsg.toString());
+                        }catch(JSONException e){
+                            e.printStackTrace();
+                        }
                     }
                 }).show();
     }

@@ -5,12 +5,13 @@ package qilu.help;
  */
 
 public class MessageItem {
-    private String Message_item_name;
-    private String Message_item_content;
-    private String Message_item_time;
-    private String Message_item_touxiang;
+    private String Message_item_name;      //列表中的名字
+    private String Message_item_content;   //列表中的内容
+    private String Message_item_time;      //列表中的时间
+    private String Message_item_touxiang;  //列表中的头像
+    private String Message_item_heId;      //列表中的Id
 
-    private boolean ifFirstClick = false;
+    private boolean ifFirstClick = true;//标记是不是第一次点击
     private boolean ifIhelpOther = false;//标记是不是我帮助了别人
 
     public void setMessage_item_name(String Message_item_name){
@@ -44,4 +45,8 @@ public class MessageItem {
     public void setIfIhelpOther(boolean ifIhelpOther){
         this.ifIhelpOther = ifIhelpOther;
     }public boolean getIfIhelpOther(){return ifIhelpOther;}
+
+    public void setMessage_item_heId(String Message_item_heId){
+        this.Message_item_heId = Message_item_heId;
+    }public String getMessage_item_heId(){ return Message_item_heId; }
 }

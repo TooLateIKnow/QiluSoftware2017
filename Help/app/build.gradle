@@ -46,7 +46,8 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.clans:fab:1.6.4'
     compile 'de.hdodenhof:circleimageview:2.1.0'
-    /*compile 'net.sf.json-lib:json-lib:2.4:jdk15'*/
     testCompile 'junit:junit:4.12'
-
+    compile 'org.litepal.android:core:1.4.1'
+    compile 'com.google.code.gson:gson:2.7'
+    compile files('libs/sun.misc.BASE64Decoder.jar')
 }

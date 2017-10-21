@@ -15,7 +15,7 @@ import static qilu.help.MainActivity.imageUri;
 import static qilu.help.R.id.Recorc_item_date;
 
 /**
- * Created by Y481 on 2017/9/9.
+ * Created by tang on 2017/9/9.
  */
 
 public class RecordAdapter extends ArrayAdapter<RecordItem> {
@@ -43,13 +43,13 @@ public class RecordAdapter extends ArrayAdapter<RecordItem> {
         //头像控件
         CircleImageView lefttouxiang = (CircleImageView)view.findViewById(R.id.Record_Lefttouxiang);
         CircleImageView righttouxiang = (CircleImageView)view.findViewById(R.id.Record_Righttouxiang);
-        if(recordItem.getRecord_item_ifIhelpOther()){
+        if(recordItem.getRecord_item_ifIhelpOther()){//TODO:如果我帮助了别人
             //设置左边的头像是我的头像
             lefttouxiang.setImageURI(imageUri);
-            //设置右边的头像是我帮助的人的头像
+            //设置右边的头像是对方的头像
             righttouxiang.setImageResource(getImageResourceId(recordItem.getRecord_right_touxiang()));
-        }else{
-            //设置左边的头像是帮助我的人的头像
+        }else{//TODO:如果别人帮助了我
+            //设置左边的头像是对方的头像
             lefttouxiang.setImageResource(getImageResourceId(recordItem.getRecord_left_touxiang()));
             //设置右边的头像是我的头像
             righttouxiang.setImageURI(imageUri);

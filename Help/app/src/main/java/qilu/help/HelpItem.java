@@ -5,14 +5,14 @@ package qilu.help;
  */
 
 public class HelpItem {
-    private String help_item_username;
-    private String help_item_time;
-    private String help_item_location;
-    private String help_item_content;
-
-    private String touxiang;
-
-    private boolean ifMine = false;
+    private String help_item_username;//求助信息中的用户名
+    private String help_item_time;    //求助信息中的时间
+    private String help_item_location;//求助信息中的地点
+    private String help_item_content; //求助信息中的求助内容
+    private String touxiang;          //求助信息中的头像
+    private String userId;            //用户的ID
+    private String reqId;             //列表中的编号
+    private boolean ifMine = false;   //标记是否是用户自己发送的
 
     public void setHelp_item_username(String help_item_username){
         this.help_item_username = help_item_username;
@@ -34,16 +34,25 @@ public class HelpItem {
         return help_item_content;
     }
 
+    public void setTouxiang(String touxiang){
+        this.touxiang = touxiang;
+    }public String getTouxiang(){
+        return touxiang;
+    }
+
     public void setIfMine(boolean ifMine){
         this.ifMine = ifMine;
     }public boolean getIfMine(){
         return ifMine;
     }
 
-    public void setTouxiang(String touxiang){
-        this.touxiang = touxiang;
-    }public String getTouxiang(){
-        return touxiang;
-    }
+    public void setUserId(String userId){
+        this.userId = userId;
+    }public String getUserId(){ return userId; }
+
+    public void setReqId(String reqId){
+        this.reqId = reqId;
+    }public String getReqId(){ return reqId; }
+
 }
 

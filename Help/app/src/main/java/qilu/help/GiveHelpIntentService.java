@@ -35,12 +35,15 @@ public class GiveHelpIntentService extends IntentService {
                 e.printStackTrace();
             }
             //读取当前系统时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date curDate = new Date(System.currentTimeMillis());//获取当前时间
             String currentDate = formatter.format(curDate);
 
             //在“消息大厅”中添加记录
-            MessageActivity.addRecord(HelpCommunity.helpname+":","感谢你愿意帮我!",currentDate,true,true,HelpCommunity.imageID);
+            MessageActivity.addRecord(HelpCommunity.helpname+":","接受了你的帮助!",
+                                      currentDate,HelpCommunity.heId,
+                                      HelpCommunity.imageID);
+
             //给手机发送一个通知
             Intent Notificationintent = new Intent(GiveHelpIntentService.this,MessageActivity.class);
             PendingIntent pi = PendingIntent.getActivity(GiveHelpIntentService.this,0,Notificationintent,0);

@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
-import static qilu.help.MainActivity.ceshifangfa;
 
 public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
@@ -61,6 +61,11 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
     private String password;
     private JSONObject loginJsonObject;
 
+    public static String username;//用户注册信息，从服务器中读取
+    public static String usermail;
+    public static String mobilephone;
+    public static String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +74,6 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
-
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -94,7 +98,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
                 attemptLogin();
                 if(!cancel){
                     //上传数据到服务器
-                    connectToServer(email,password,view);
+                    connectToServer(view);
                 }
             }
         });
@@ -187,7 +191,7 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         }
 
         if (cancel) {//如果检查不合格
-            focusView.requestFocus();
+            //focusView.requestFocus();
         } else {//如果检查合格
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
@@ -203,22 +207,30 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         }
     }
     //上传数据到服务器
-    public void connectToServer(final String mobilephone,final String password,final View view){
+    public void connectToServer(final View view){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    String urlStr="http://192.168.43.193:50000/HelpServer/loginingservlet";//设置路径
+                    //String urlStr="http://192.168.43.193:50000/HelpServer/loginingservlet";//设置路径
+                    String urlStr="http://192.168.43.49:8080/LoginServlet";
                     //下面是写入服务器中的数据
-                    String params = "login=" + loginJsonObject.toString();
+                    String params = "user=" + loginJsonObject.toString();
                     String resultData=HttpUtil.HttpPostMethod(urlStr,params);
-                    if (resultData.equals("登录成功")) {//这里的服务器需要把注册信息发送给客户端
-                        //接收登录的广播
+                    if (!resultData.equals("0000")) {//这里的服务器需要把注册信息发送给客户端
+                        //接收登录的广播，该广播
+                        System.out.println(resultData);
                         Intent intentLogin = new Intent("HAS.LOGINED.IN.SUCCEED");
                         sendBroadcast(intentLogin);
-                        //登录之后，需要启动一个服务，该服务每隔一段时间向服务器发送一次当前的
+                        ///这里需要的是解析来自服务器的JSON字符串
+                        resolveJSONObject(resultData);
+                        //将解析出来的数据插入到数据库中，表格在MainAcitivity激活的时候就已经创建了
+                        DataBaseTools.insertData(username,usermail,null,null,mobilephone,userId);
+                        //启动一个服务，该服务时时与服务器相连接，使用socket方法
+                        Intent intentserver = new Intent(Login.this,socketService.class);
+                        startService(intentserver);
                     }else{
-                        Snackbar.make(view,"注册失败，请修改用户名重新注册！",Snackbar.LENGTH_SHORT)
+                        Snackbar.make(view,"登录失败！",Snackbar.LENGTH_SHORT)
                                 .show();
                     }
                 }catch(IOException e){
@@ -228,6 +240,21 @@ public class Login extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         }).start();
 
     }
+
+    static public void resolveJSONObject(String resultData){//该方法用来解析JSON字符串
+        /*解析的username，usermail，mobilephone*/
+        try{
+            JSONObject jsonObject = new JSONObject(resultData);
+            username = jsonObject.getString("username");
+            usermail = jsonObject.getString("usermail");
+            mobilephone = jsonObject.getString("mobilephone");
+            userId = jsonObject.getString("userId");
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     static public boolean isEmailValid(String email) {
         //TODO: 判断邮箱中有没有@
         return email.contains("@");

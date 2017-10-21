@@ -23,13 +23,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static qilu.help.MainActivity.imageUri;
 
 /**
- * Created by Y481 on 2017/9/9.
+ * Created by tang on 2017/9/9.
  */
 
 public class HelpCommunityAdapter extends ArrayAdapter<HelpItem> {
     private int resourceId;
 
-    static public Uri HisHeadImageUri;
+    static public Uri HisHeadImageUri;//标记对方的头像
 
     public HelpCommunityAdapter(Context context,int textVieWResourceId,List<HelpItem> objects){
         super(context,textVieWResourceId,objects);
@@ -51,28 +51,25 @@ public class HelpCommunityAdapter extends ArrayAdapter<HelpItem> {
 
         //匹配头像控件
         CircleImageView touxiang = (CircleImageView)view.findViewById(R.id.help_item_touxiang);
-        if(helpItem.getHelp_item_username().equals("木土土的")){
+        if(helpItem.getTouxiang().equals("a")){
             touxiang.setImageResource(R.drawable.tang);
-        }else if(helpItem.getHelp_item_username().equals("蓦然飞跃")){
+        }else if(helpItem.getTouxiang().equals("b")){
             touxiang.setImageResource(R.drawable.tang1);
-        }else if(helpItem.getHelp_item_username().equals("荡荡")){
+        }else if(helpItem.getTouxiang().equals("c")){
             touxiang.setImageResource(R.drawable.tang2);
-        }else if(helpItem.getHelp_item_username().equals("高富帅")){
+        }else if(helpItem.getTouxiang().equals("d")){
             touxiang.setImageResource(R.drawable.tang3);
-        }else if(helpItem.getHelp_item_username().equals("印团")){
-            touxiang.setImageResource(R.drawable.tang4);
-        }else{
+        }else if(helpItem.getTouxiang().equals("i")){
             Bitmap bm = MainActivity.compressBitmap(null, null, HelpCommunity.context,imageUri, 4, false);
             touxiang.setImageBitmap(bm);
-            //touxiang.setImageURI(imageUri);
         }
 
-        ImageView help_item_tongzhi = (ImageView)view.findViewById(R.id.help_item_tongzhi);
+        ImageView help_item_tongzhi = (ImageView)view.findViewById(R.id.help_item_tongzhi);//通知，这个界面其实不需要
         help_item_tongzhi.setVisibility(View.INVISIBLE);
 
         return view;
     }
-    public int getImageResourceId(String name) {
+    public int getImageResourceId(String name) {//获得图片源
         R.drawable drawables=new R.drawable();
         //默认的id
         int resId=0x7f02000b;
